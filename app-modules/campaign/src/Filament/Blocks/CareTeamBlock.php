@@ -69,7 +69,7 @@ class CareTeamBlock extends CampaignActionBlock
                 ->label('Remove all prior care team assignments?')
                 ->default(false)
                 ->hintIconTooltip('If checked, all prior care team assignments will be removed.'),
-            DateTimePicker::make($fieldPrefix . 'execute_at')
+            DateTimePicker::make('execute_at')
                 ->label('When should the journey step be executed?')
                 ->columnSpanFull()
                 ->timezone(app(CampaignSettings::class)->getActionExecutionTimezone())
