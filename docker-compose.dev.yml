@@ -6,8 +6,6 @@ services:
       args:
         PUID: '${PLS_USER_ID:-9999}'
         PGID: '${PLS_GROUP_ID:-9999}'
-    profiles:
-      - app
     environment:
       SERVICE: "web"
       SSL_MODE: "mixed"
@@ -54,8 +52,6 @@ services:
         MULTIPLE_DEVELOPMENT_QUEUES: '${MULTIPLE_DEVELOPMENT_QUEUES:-false}'
         USER_ID: '${PLS_USER_ID:-9999}'
         GROUP_ID: '${PLS_GROUP_ID:-9999}'
-    profiles:
-      - worker
     environment:
       SERVICE: "worker"
       CACHE_MODULES: false
@@ -92,8 +88,6 @@ services:
       args:
         USER_ID: '${PLS_USER_ID:-9999}'
         GROUP_ID: '${PLS_GROUP_ID:-9999}'
-    profiles:
-      - scheduler
     environment:
       SERVICE: "scheduler"
       CACHE_MODULES: false

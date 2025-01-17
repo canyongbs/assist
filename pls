@@ -1,4 +1,10 @@
 #!/usr/bin/env bash
+set -e
+
+export COMPOSE_CMD=(docker compose -f docker-compose.dev.yml)
+
+export PLS_USER_ID=${PLS_USER_ID:-$(id -u)}
+export PLS_GROUP_ID=${PLS_GROUP_ID:-$(id -g)}
 
 # Display general help message
 show_help() {
@@ -9,40 +15,58 @@ show_help() {
   echo "  stop      Stop Docker containers"
   echo "  down      Stop Docker containers"
   echo "  logs      Show logs for Docker containers"
+  echo "  exec      Execute a command in a running container"
+  echo "  shell     Start a shell in a running container as webuser"
+  echo "  rshell    Start a shell in a running container as root"
   echo "Options:"
   echo "  Any additional options will be passed directly to the respective docker compose commands"
 }
 
 main() {
-  COMMAND=$1
-  shift
+  # filter_out_non_docker_compose_args "$@"
 
-  PROFILE=$1
-  if [[ $COMMAND != "logs" && "$PROFILE" == "app" || "$PROFILE" == "worker" || "$PROFILE" == "scheduler" ]]; then
-    PROFILE_OPTION="--profile=$PROFILE"
-    shift
-  else 
-    PROFILE_OPTION="--profile=*"
-  fi
+  COMMAND=$1
+  shift 1
  
   export PLS_USER_ID=$(id -u)
   export PLS_GROUP_ID=$(id -g)
 
   case "$COMMAND" in
     build)
-      exec docker compose -f docker-compose.dev.yml "$PROFILE_OPTION" build "$@"
+      exec "${COMPOSE_CMD[@]}" build "$@"
       ;;
     up)
-      exec docker compose -f docker-compose.dev.yml "$PROFILE_OPTION" up "$@"
+      exec "${COMPOSE_CMD[@]}" up "$@"
       ;;
     down)
-      exec docker compose -f docker-compose.dev.yml "$PROFILE_OPTION" down "$@"
+      exec "${COMPOSE_CMD[@]}" down "$@"
       ;;
     logs)
-      exec docker compose -f docker-compose.dev.yml logs "$@"
+      exec "${COMPOSE_CMD[@]}" logs "$@"
       ;;
     stop)
-      exec docker compose -f docker-compose.dev.yml "$PROFILE_OPTION" stop "$@"
+      exec "${COMPOSE_CMD[@]}" stop "$@"
+      ;;
+    exec)
+      exec "${COMPOSE_CMD[@]}" exec "$@"
+      ;;
+    shell)
+      local service=$1
+
+      if [[ -z "$service" ]]; then
+        service=app
+      fi
+
+      exec "${COMPOSE_CMD[@]}" exec -it -u webuser "$service" /bin/bash
+      ;;
+    rshell)
+      local service=$1
+
+      if [[ -z "$service" ]]; then
+        service=app
+      fi
+
+      exec "${COMPOSE_CMD[@]}" exec -it "$service" /bin/bash
       ;;
     *)
       echo "Unknown command: $COMMAND"
