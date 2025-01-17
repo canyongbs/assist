@@ -68,6 +68,12 @@ main() {
 
       exec "${COMPOSE_CMD[@]}" exec -it "$service" /bin/bash
       ;;
+    install)
+      mkdir -p "$HOME/bin"
+      sudo cp "$(realpath "$0")" "/usr/bin/pls"
+      sudo chmod +x "/usr/bin/pls"
+      echo "Installed pls to /usr/bin/pls"
+      ;;
     *)
       echo "Unknown command: $COMMAND"
       show_help
