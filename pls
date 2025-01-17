@@ -53,9 +53,13 @@ show_help() {
   echo "Commands:"
   echo "  build     Build Docker images"
   echo "  up        Start Docker containers"
+  echo "            The -d option can be used to start the containers in detached mode (e.g. ${BLUE}pls up -d${RESET})"
   echo "  stop      Stop Docker containers"
   echo "  down      Stop Docker containers"
+  echo "            The -v option can be used to remove volumes (e.g. ${BLUE}pls down -v${RESET})"
   echo "  logs      Show logs for Docker containers"
+  echo "              One or more names of the services, seperated by spaces, can be passed as arguments to filter the logs (e.g. ${BLUE}pls log apps${RESET} or ${BLUE}pls logs app worker${RESET})"
+  echo "              The -f option can be used to follow the logs (e.g. ${BLUE}pls logs app -f${RESET})"
   echo "  exec      Execute a command in a running container"
   echo "  shell     Start a shell in a running container as webuser"
   echo "  rshell    Start a shell in a running container as root"
@@ -107,6 +111,9 @@ main() {
       fi
 
       exec "${COMPOSE_CMD[@]}" exec -it "$service" /bin/bash
+      ;;
+    -h|--help)
+      show_help
       ;;
     -v|--version)
       echo "$VERSION"
