@@ -40,6 +40,7 @@ use AdvisingApp\StudentDataModel\Filament\Resources\StudentTagResource\Pages\Cre
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentTagResource\Pages\EditStudentTag;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentTagResource\Pages\ListStudentTags;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentTagResource\Pages\ViewStudentTag;
+use AdvisingApp\StudentDataModel\Models\Student;
 use App\Enums\TagType;
 use App\Filament\Clusters\ConstituentManagement;
 use App\Models\Tag;
@@ -59,6 +60,14 @@ class StudentTagResource extends Resource
     protected static ?string $cluster = ConstituentManagement::class;
 
     protected static ?string $navigationGroup = 'Students';
+
+    public static function canAccess(): bool
+    {
+        /** @var User $user */
+        $user = auth()->user();
+
+        return $user->hasLicense(Student::getLicenseType());
+    }
 
     public static function getPages(): array
     {

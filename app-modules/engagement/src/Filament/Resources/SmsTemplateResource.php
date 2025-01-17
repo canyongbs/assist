@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Engagement\Filament\Resources;
 
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Engagement\Filament\Resources\SmsTemplateResource\Pages\CreateSmsTemplate;
 use AdvisingApp\Engagement\Filament\Resources\SmsTemplateResource\Pages\EditSmsTemplate;
 use AdvisingApp\Engagement\Filament\Resources\SmsTemplateResource\Pages\ListSmsTemplates;
@@ -56,6 +57,14 @@ class SmsTemplateResource extends Resource
     protected static ?int $navigationSort = 130;
 
     protected static ?string $cluster = Communication::class;
+
+    public static function canAccess(): bool
+    {
+        /** @var User $user */
+        $user = auth()->user();
+
+        return $user->hasAnyLicense([LicenseType::RetentionCrm, LicenseType::RecruitmentCrm]);
+    }
 
     public static function getPages(): array
     {

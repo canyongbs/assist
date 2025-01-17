@@ -37,6 +37,7 @@
 namespace AdvisingApp\Prospect\Filament\Pages;
 
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
+use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Settings\ProspectPipelineSettings;
 use App\Features\PipelineFlag;
 use App\Filament\Clusters\ConstituentManagement;
@@ -53,7 +54,7 @@ class ManageProspectPipelineSettings extends SettingsPage
 
     protected static ?string $cluster = ConstituentManagement::class;
 
-    protected static ?string $navigationGroup = 'Prospect Management';
+    protected static ?string $navigationGroup = 'Prospects';
 
     protected static string $settings = ProspectPipelineSettings::class;
 
@@ -65,6 +66,10 @@ class ManageProspectPipelineSettings extends SettingsPage
     {
         /** @var User $user */
         $user = auth()->user();
+
+        if (! $user->hasLicense(Prospect::getLicenseType())) {
+            return false;
+        }
 
         return PipelineFlag::active() && $user->can(['product_admin.view-any']);
     }

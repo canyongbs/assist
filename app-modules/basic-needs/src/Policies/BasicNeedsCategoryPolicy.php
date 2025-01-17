@@ -37,6 +37,7 @@
 namespace AdvisingApp\BasicNeeds\Policies;
 
 use AdvisingApp\BasicNeeds\Models\BasicNeedsCategory;
+use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
@@ -45,8 +46,8 @@ class BasicNeedsCategoryPolicy
 {
     public function before(Authenticatable $authenticatable): ?Response
     {
-        if (! $authenticatable->hasLicense(Student::getLicenseType())) {
-            return Response::deny('You are not licensed for the Retention CRM.');
+        if (! $authenticatable->hasAnyLicense([Student::getLicenseType(), Prospect::getLicenseType()])) {
+            return Response::deny('You are not licensed for the Retention or Recruitment CRM.');
         }
 
         return null;

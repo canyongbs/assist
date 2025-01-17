@@ -40,6 +40,7 @@ use AdvisingApp\Prospect\Filament\Resources\ProspectTagResource\Pages\CreatePros
 use AdvisingApp\Prospect\Filament\Resources\ProspectTagResource\Pages\EditProspectTag;
 use AdvisingApp\Prospect\Filament\Resources\ProspectTagResource\Pages\ListProspectTags;
 use AdvisingApp\Prospect\Filament\Resources\ProspectTagResource\Pages\ViewProspectTag;
+use AdvisingApp\Prospect\Models\Prospect;
 use App\Enums\TagType;
 use App\Filament\Clusters\ConstituentManagement;
 use App\Models\Tag;
@@ -59,6 +60,14 @@ class ProspectTagResource extends Resource
     protected static ?string $cluster = ConstituentManagement::class;
 
     protected static ?string $navigationGroup = 'Prospects';
+
+    public static function canAccess(): bool
+    {
+        /** @var User $user */
+        $user = auth()->user();
+
+        return $user->hasLicense(Prospect::getLicenseType());
+    }
 
     public static function getPages(): array
     {
