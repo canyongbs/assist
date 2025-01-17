@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -e
 
+VERSION="0.6.0"
+
 export COMPOSE_CMD=(docker compose -f docker-compose.dev.yml)
 
 export PLS_USER_ID=${PLS_USER_ID:-$(id -u)}
@@ -20,10 +22,18 @@ show_help() {
   echo "  rshell    Start a shell in a running container as root"
   echo "Options:"
   echo "  Any additional options will be passed directly to the respective docker compose commands"
+  echo "  -v, --version  Display the version of pls"
 }
 
 main() {
-  # filter_out_non_docker_compose_args "$@"
+  if [[ -f "pls" ]]; then
+    local file_version
+    file_version=$(grep '^VERSION=' pls | cut -d'"' -f2)
+    if [[ -n "$file_version" && "$file_version" != "$VERSION" ]]; then
+      echo "Warning: The version of the pls script in the current directory is $file_version, but the installed version is $VERSION."
+      echo "You may want to run the install command to update the installed version."
+    fi
+  fi
 
   COMMAND=$1
   shift 1
@@ -67,6 +77,9 @@ main() {
       fi
 
       exec "${COMPOSE_CMD[@]}" exec -it "$service" /bin/bash
+      ;;
+    -v|--version)
+      echo "$VERSION"
       ;;
     install)
       mkdir -p "$HOME/bin"
