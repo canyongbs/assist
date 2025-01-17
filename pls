@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-VERSION="0.9.0"
+VERSION="1.0.0"
 
 export COMPOSE_CMD=(docker compose -f docker-compose.dev.yml)
 
