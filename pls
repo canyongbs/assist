@@ -70,9 +70,13 @@ main() {
       ;;
     install)
       mkdir -p "$HOME/bin"
-      sudo cp "$(realpath "$0")" "/usr/bin/pls"
-      sudo chmod +x "/usr/bin/pls"
-      echo "Installed pls to /usr/bin/pls"
+      cp "$(realpath "$0")" "$HOME/bin/pls"
+      chmod +x "$HOME/bin/pls"
+      if ! grep -q "$HOME/bin" "$HOME/.bashrc"; then
+        echo 'export PATH="$HOME/bin:$PATH"' >> "$HOME/.bashrc"
+      fi
+      source ~/.bashrc
+      echo -e "Installed pls to $HOME/bin.\nThe command is now available in your shell as just \"pls\".\nIf changes are made to the script, you will need to run this command again to update the installed version."
       ;;
     *)
       echo "Unknown command: $COMMAND"
