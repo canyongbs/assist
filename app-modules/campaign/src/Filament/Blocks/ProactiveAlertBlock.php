@@ -38,12 +38,12 @@ namespace AdvisingApp\Campaign\Filament\Blocks;
 
 use AdvisingApp\Alert\Enums\AlertSeverity;
 use AdvisingApp\Alert\Enums\SystemAlertStatusClassification;
+use AdvisingApp\Alert\Models\AlertStatus;
 use AdvisingApp\Campaign\Settings\CampaignSettings;
 use Carbon\CarbonImmutable;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
-use Illuminate\Database\Eloquent\Builder;
 
 class ProactiveAlertBlock extends CampaignActionBlock
 {
@@ -73,9 +73,10 @@ class ProactiveAlertBlock extends CampaignActionBlock
                 ->string(),
             Select::make($fieldPrefix . 'status_id')
                 ->label('Status')
-                ->relationship('status', 'name', fn (Builder $query) => $query->orderBy('order'))
+                ->options(AlertStatus::orderBy('order')->pluck('name', 'id'))
                 ->selectablePlaceholder(false)
                 ->default(fn () => SystemAlertStatusClassification::default()?->getKey())
+                ->exists('alert_statuses', 'id')
                 ->required(),
             DateTimePicker::make($fieldPrefix . 'execute_at')
                 ->label('When should the journey step be executed?')
