@@ -4,9 +4,6 @@
 * [Docker](https://docs.docker.com/get-docker/) version `26.0.0` or higher
 * [Docker Compose](https://docs.docker.com/compose/install/) version `2.25.0` or higher (It is most likely that the way you installed Docker already came with Docker Compose, so on most systems you probably need not install this)
 * [NVM (Node Version Manager)](https://github.com/nvm-sh/nvm) (Optional, but recommended)
-* Spin CLI
-  * [Spin MacOS](https://serversideup.net/open-source/spin/docs/installation/install-macos#install-docker-desktop)
-  * [Spin Linux](https://serversideup.net/open-source/spin/docs/installation/install-linux)
 
 ### Pre-Setup
 
