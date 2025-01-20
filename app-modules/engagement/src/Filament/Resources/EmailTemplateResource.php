@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Engagement\Filament\Resources;
 
-use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Engagement\Filament\Resources\EmailTemplateResource\Pages\CreateEmailTemplate;
 use AdvisingApp\Engagement\Filament\Resources\EmailTemplateResource\Pages\EditEmailTemplate;
 use AdvisingApp\Engagement\Filament\Resources\EmailTemplateResource\Pages\ListEmailTemplates;
@@ -53,14 +52,6 @@ class EmailTemplateResource extends Resource
     protected static ?int $navigationSort = 120;
 
     protected static ?string $cluster = Communication::class;
-
-    public static function canAccess(): bool
-    {
-        /** @var User $user */
-        $user = auth()->user();
-
-        return $user->hasAnyLicense([LicenseType::RetentionCrm, LicenseType::RecruitmentCrm]);
-    }
 
     public static function getPages(): array
     {
