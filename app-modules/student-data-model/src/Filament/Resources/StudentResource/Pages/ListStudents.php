@@ -358,11 +358,11 @@ class ListStudents extends ListRecords implements HasBulkEngagementAction
                             ->format('Y-m-d H:i:s')
                             ->displayFormat('Y-m-d H:i:s'),
                         TextInput::make('f_e_term')
-                            ->label('First Enrollement Term')
+                            ->label('First Enrollment Term')
                             ->string()
                             ->maxLength(255),
                         TextInput::make('mr_e_term')
-                            ->label('Most Recent Enrollement Term')
+                            ->label('Most Recent Enrollment Term')
                             ->string()
                             ->maxLength(255),
                     ])

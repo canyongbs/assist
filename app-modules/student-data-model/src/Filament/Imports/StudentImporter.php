@@ -225,7 +225,7 @@ class StudentImporter extends Importer
                     'date',
                 ]),
             ImportColumn::make('f_e_term')
-                ->label('First Enrollement Term')
+                ->label('First Enrollment Term')
                 ->example('1234')
                 ->rules([
                     'nullable',
@@ -233,7 +233,7 @@ class StudentImporter extends Importer
                     'max:255',
                 ]),
             ImportColumn::make('mr_e_term')
-                ->label('Most Recent Enrollement Term')
+                ->label('Most Recent Enrollment Term')
                 ->example('1234')
                 ->rules([
                     'nullable',
