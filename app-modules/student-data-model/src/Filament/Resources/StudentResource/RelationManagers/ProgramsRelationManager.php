@@ -71,10 +71,6 @@ class ProgramsRelationManager extends RelationManager
             ->schema([
                 TextEntry::make('sisid')
                     ->label('SISID'),
-                TextEntry::make('otherid')
-                    ->label('STUID')
-                    ->placeholder('-')
-                    ->visible($sisSystem?->hasProgramsOtherid() ?? true),
                 TextEntry::make('division')
                     ->label('College')
                     ->placeholder('-')
@@ -152,9 +148,6 @@ class ProgramsRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('descr')
             ->columns([
-                TextColumn::make('otherid')
-                    ->label('STUID')
-                    ->visible($sisSystem?->hasProgramsOtherid() ?? true),
                 TextColumn::make('division')
                     ->label('College')
                     ->visible($sisSystem?->hasProgramsDivision() ?? true),
@@ -243,11 +236,6 @@ class ProgramsRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                TextInput::make('otherid')
-                    ->label('Other ID')
-                    ->required()
-                    ->string()
-                    ->maxLength(255),
                 TextInput::make('acad_career')
                     ->string()
                     ->maxLength(255)

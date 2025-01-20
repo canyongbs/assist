@@ -34,64 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Models;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
-
-/**
- * @mixin IdeHelperProgram
- */
-class Program extends Model
-{
-    use SoftDeletes;
-    use HasFactory;
-    use UsesTenantConnection;
-
-    protected $table = 'programs';
-
-    /**
-     * This Model has a primary key that is auto generated as a v4 UUID by Postgres.
-     * We do so so that we can do things like view, edit, and delete a specific record in the UI / API.
-     * This ID should NEVER be used for relationships as these records do not belong to our system, our reset during syncs, and are not truly unique.
-     */
-    protected $primaryKey = 'id';
-
-    public $incrementing = false;
-
-    protected $keyType = 'string';
-
-    public $timestamps = false;
-
-    protected $fillable = [
-        'sisid',
-        'acad_career',
-        'division',
-        'acad_plan',
-        'prog_status',
-        'cum_gpa',
-        'semester',
-        'descr',
-        'foi',
-        'change_dt',
-        'declare_dt',
-        'graduation_dt',
-        'conferred_dt',
-    ];
-
-    protected $casts = [
-        'acad_plan' => 'array',
-        'change_dt' => 'datetime',
-        'declare_dt' => 'datetime',
-        'graduation_dt' => 'datetime',
-        'conferred_dt' => 'datetime',
-    ];
-
-    public function student(): BelongsTo
+return new class () extends Migration {
+    public function up(): void
     {
-        return $this->belongsTo(Student::class, 'sisid', 'sisid');
+        Schema::table('programs', function (Blueprint $table) {
+            $table->dropColumn('otherid');
+        });
     }
-}
+
+    public function down(): void
+    {
+        Schema::table('programs', function (Blueprint $table) {
+            $table->string('otherid');
+        });
+    }
+};

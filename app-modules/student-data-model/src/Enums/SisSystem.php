@@ -58,14 +58,6 @@ enum SisSystem: string implements HasLabel
         return self::tryFrom($value);
     }
 
-    public function hasProgramsOtherid(): bool
-    {
-        return match ($this) {
-            SisSystem::ThesisElements => false,
-            default => true,
-        };
-    }
-
     public function hasProgramsDivision(): bool
     {
         return match ($this) {
