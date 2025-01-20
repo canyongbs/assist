@@ -137,7 +137,7 @@ class InteractionBlock extends CampaignActionBlock
                     Textarea::make($fieldPrefix . 'description')
                         ->required(),
                 ]),
-            DateTimePicker::make($fieldPrefix . 'execute_at')
+            DateTimePicker::make('execute_at')
                 ->label('When should the journey step be executed?')
                 ->columnSpanFull()
                 ->timezone(app(CampaignSettings::class)->getActionExecutionTimezone())

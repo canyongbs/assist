@@ -77,7 +77,7 @@ class ProactiveAlertBlock extends CampaignActionBlock
                 ->selectablePlaceholder(false)
                 ->default(fn () => SystemAlertStatusClassification::default()?->getKey())
                 ->required(),
-            DateTimePicker::make($fieldPrefix . 'execute_at')
+            DateTimePicker::make('execute_at')
                 ->label('When should the journey step be executed?')
                 ->columnSpanFull()
                 ->timezone(app(CampaignSettings::class)->getActionExecutionTimezone())

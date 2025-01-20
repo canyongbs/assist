@@ -63,7 +63,7 @@ class EventBlock extends CampaignActionBlock
                 ->options(Event::where('ends_at', '>=', now())->pluck('title', 'id')->toArray())
                 ->nullable()
                 ->searchable(),
-            DateTimePicker::make($fieldPrefix . 'execute_at')
+            DateTimePicker::make('execute_at')
                 ->label('When should the journey step be executed?')
                 ->columnSpanFull()
                 ->timezone(app(CampaignSettings::class)->getActionExecutionTimezone())
