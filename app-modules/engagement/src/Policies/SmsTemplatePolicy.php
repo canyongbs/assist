@@ -37,11 +37,22 @@
 namespace AdvisingApp\Engagement\Policies;
 
 use AdvisingApp\Engagement\Models\SmsTemplate;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
 
 class SmsTemplatePolicy
 {
+    public function before(Authenticatable $authenticatable): ?Response
+    {
+        if (! $authenticatable->hasAnyLicense([Student::getLicenseType(), Prospect::getLicenseType()])) {
+            return Response::deny('You are not licensed for the Retention or Recruitment CRM.');
+        }
+
+        return null;
+    }
+
     public function viewAny(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(

@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Pages;
 
+use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
 use App\Filament\Clusters\ConstituentManagement;
 use App\Models\User;
@@ -59,6 +60,10 @@ class ManageStudentConfiguration extends SettingsPage
     {
         /** @var User $user */
         $user = auth()->user();
+
+        if (! $user->hasLicense(Student::getLicenseType())) {
+            return false;
+        }
 
         return $user->can(['product_admin.view-any']);
     }
