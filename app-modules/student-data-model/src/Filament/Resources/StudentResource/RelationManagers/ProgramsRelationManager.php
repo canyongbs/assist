@@ -245,53 +245,44 @@ class ProgramsRelationManager extends RelationManager
             ->schema([
                 TextInput::make('otherid')
                     ->label('Other ID')
-                    ->required()
                     ->string()
                     ->maxLength(255),
                 TextInput::make('acad_career')
                     ->string()
                     ->maxLength(255)
-                    ->required()
-                    ->label('ACAD career'),
+                    ->label('Academic Career'),
                 TextInput::make('division')
                     ->string()
                     ->maxLength(255)
-                    ->required()
                     ->label('Division'),
                 TextInput::make('acad_plan')
                     ->required()
-                    ->label('ACAD plan'),
+                    ->label('Academic Plan'),
                 TextInput::make('prog_status')
-                    ->required()
-                    ->label('PROG status')
+                    ->label('Program Status')
                     ->default('AC'),
                 TextInput::make('cum_gpa')
-                    ->required()
-                    ->label('Cum GPA')
+                    ->label('Cumulative GPA')
                     ->numeric(),
                 TextInput::make('semester')
-                    ->required()
                     ->label('Semester')
                     ->string()
                     ->maxLength(255),
                 TextInput::make('descr')
-                    ->required()
-                    ->label('DESCR')
+                    ->label('Description')
                     ->string()
                     ->maxLength(255),
                 TextInput::make('foi')
-                    ->required()
-                    ->label('Field of interest'),
+                    ->label('Field of Interest'),
                 DateTimePicker::make('change_dt')
-                    ->required()
-                    ->label('Change date')
+                    ->label('Change Date')
                     ->native(false)
                     ->closeOnDateSelection()
                     ->format('Y-m-d H:i:s')
                     ->displayFormat('Y-m-d H:i:s'),
                 DateTimePicker::make('declare_dt')
+                    ->label('Declare Date')
                     ->required()
-                    ->label('Declare date')
                     ->native(false)
                     ->closeOnDateSelection()
                     ->format('Y-m-d H:i:s')
