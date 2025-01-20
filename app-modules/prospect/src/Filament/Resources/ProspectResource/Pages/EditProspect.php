@@ -43,6 +43,7 @@ use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\Disassociat
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
+use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use App\Models\User;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
@@ -59,6 +60,7 @@ use Illuminate\Database\Eloquent\Builder;
 class EditProspect extends EditRecord
 {
     use ProspectHolisticViewPage;
+    use EditPageRedirection;
 
     protected static string $resource = ProspectResource::class;
 

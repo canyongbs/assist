@@ -39,6 +39,7 @@ namespace AdvisingApp\Form\Filament\Resources\FormResource\Pages;
 use AdvisingApp\Engagement\Models\EmailTemplate;
 use AdvisingApp\Form\Filament\Resources\FormResource;
 use AdvisingApp\Form\Models\Form;
+use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use App\Models\User;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Checkbox;
@@ -56,6 +57,8 @@ use Illuminate\Database\Query\Expression;
 
 class ManageFormEmailAutoReply extends EditRecord
 {
+    use EditPageRedirection;
+
     protected static string $resource = FormResource::class;
 
     protected static ?string $navigationLabel = 'Email Auto Reply';

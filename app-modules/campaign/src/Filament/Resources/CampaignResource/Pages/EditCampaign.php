@@ -37,6 +37,7 @@
 namespace AdvisingApp\Campaign\Filament\Resources\CampaignResource\Pages;
 
 use AdvisingApp\Campaign\Filament\Resources\CampaignResource;
+use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -46,6 +47,8 @@ use Filament\Resources\Pages\EditRecord;
 
 class EditCampaign extends EditRecord
 {
+    use EditPageRedirection;
+
     protected static string $resource = CampaignResource::class;
 
     public function form(Form $form): Form

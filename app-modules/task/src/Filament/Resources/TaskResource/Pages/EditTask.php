@@ -38,6 +38,7 @@ namespace AdvisingApp\Task\Filament\Resources\TaskResource\Pages;
 
 use AdvisingApp\Task\Filament\Concerns\TaskEditForm;
 use AdvisingApp\Task\Filament\Resources\TaskResource;
+use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
@@ -45,6 +46,7 @@ use Filament\Resources\Pages\EditRecord;
 class EditTask extends EditRecord
 {
     use TaskEditForm;
+    use EditPageRedirection;
 
     protected static string $resource = TaskResource::class;
 

@@ -41,6 +41,7 @@ use AdvisingApp\Authorization\Settings\AzureSsoSettings;
 use AdvisingApp\Authorization\Settings\GoogleSsoSettings;
 use AdvisingApp\Team\Models\Team;
 use App\Filament\Forms\Components\Licenses;
+use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use App\Filament\Resources\UserResource;
 use App\Models\User;
 use App\Notifications\SetPasswordNotification;
@@ -59,6 +60,8 @@ use STS\FilamentImpersonate\Pages\Actions\Impersonate;
 
 class EditUser extends EditRecord
 {
+    use EditPageRedirection;
+
     protected static string $resource = UserResource::class;
 
     public function form(Form $form): Form

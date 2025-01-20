@@ -38,6 +38,7 @@ namespace AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages;
 
 use AdvisingApp\MeetingCenter\Filament\Resources\EventResource;
 use AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages\Concerns\HasSharedEventFormConfiguration;
+use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Form;
@@ -46,6 +47,7 @@ use Filament\Resources\Pages\EditRecord;
 class EditEvent extends EditRecord
 {
     use HasSharedEventFormConfiguration;
+    use EditPageRedirection;
 
     protected static string $resource = EventResource::class;
 

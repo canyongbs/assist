@@ -37,11 +37,14 @@
 namespace AdvisingApp\Interaction\Filament\Resources\InteractionDriverResource\Pages;
 
 use AdvisingApp\Interaction\Filament\Resources\InteractionDriverResource;
+use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 
 class EditInteractionDriver extends EditRecord
 {
+    use EditPageRedirection;
+
     protected static string $resource = InteractionDriverResource::class;
 
     protected function getHeaderActions(): array

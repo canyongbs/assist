@@ -37,6 +37,7 @@
 namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubQualityResource\Pages;
 
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubQualityResource;
+use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\TextInput;
@@ -45,6 +46,8 @@ use Filament\Resources\Pages\EditRecord;
 
 class EditResourceHubQuality extends EditRecord
 {
+    use EditPageRedirection;
+
     protected static string $resource = ResourceHubQualityResource::class;
 
     public function form(Form $form): Form

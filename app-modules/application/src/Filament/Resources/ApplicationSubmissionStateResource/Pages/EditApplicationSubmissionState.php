@@ -39,6 +39,7 @@ namespace AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStateR
 use AdvisingApp\Application\Enums\ApplicationSubmissionStateClassification;
 use AdvisingApp\Application\Enums\ApplicationSubmissionStateColorOptions;
 use AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStateResource;
+use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Select;
@@ -49,6 +50,8 @@ use Filament\Resources\Pages\EditRecord;
 
 class EditApplicationSubmissionState extends EditRecord
 {
+    use EditPageRedirection;
+
     protected static string $resource = ApplicationSubmissionStateResource::class;
 
     public function form(Form $form): Form

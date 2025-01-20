@@ -37,6 +37,7 @@
 namespace AdvisingApp\MeetingCenter\Filament\Resources\CalendarEventResource\Pages;
 
 use AdvisingApp\MeetingCenter\Filament\Resources\CalendarEventResource;
+use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\DateTimePicker;
@@ -48,6 +49,8 @@ use Filament\Resources\Pages\EditRecord;
 
 class EditCalendarEvent extends EditRecord
 {
+    use EditPageRedirection;
+
     protected static string $resource = CalendarEventResource::class;
 
     public function form(Form $form): Form

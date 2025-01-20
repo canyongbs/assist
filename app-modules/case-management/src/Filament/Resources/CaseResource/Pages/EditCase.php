@@ -44,6 +44,7 @@ use AdvisingApp\CaseManagement\Models\CaseStatus;
 use AdvisingApp\CaseManagement\Models\CaseType;
 use AdvisingApp\Division\Models\Division;
 use App\Filament\Forms\Components\EducatableSelect;
+use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Select;
@@ -58,6 +59,7 @@ use Illuminate\Support\Collection;
 class EditCase extends EditRecord
 {
     use HasCaseRecordHeader;
+    use EditPageRedirection;
 
     protected static string $resource = CaseResource::class;
 

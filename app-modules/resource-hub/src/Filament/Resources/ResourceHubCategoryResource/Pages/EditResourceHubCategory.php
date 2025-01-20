@@ -38,6 +38,7 @@ namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategoryResource
 
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategoryResource;
 use App\Filament\Forms\Components\IconSelect;
+use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Textarea;
@@ -47,6 +48,8 @@ use Filament\Resources\Pages\EditRecord;
 
 class EditResourceHubCategory extends EditRecord
 {
+    use EditPageRedirection;
+
     protected static string $resource = ResourceHubCategoryResource::class;
 
     public function form(Form $form): Form

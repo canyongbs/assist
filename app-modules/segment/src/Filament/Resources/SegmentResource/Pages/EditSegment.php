@@ -41,6 +41,7 @@ use AdvisingApp\Segment\Enums\SegmentModel;
 use AdvisingApp\Segment\Enums\SegmentType;
 use AdvisingApp\Segment\Filament\Resources\SegmentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Select;
@@ -58,6 +59,7 @@ class EditSegment extends EditRecord implements HasTable
     use InteractsWithTable {
         bootedInteractsWithTable as baseBootedInteractsWithTable;
     }
+    use EditPageRedirection;
 
     protected static string $resource = SegmentResource::class;
 

@@ -37,6 +37,7 @@
 namespace AdvisingApp\Ai\Filament\Resources\PromptTypeResource\Pages;
 
 use AdvisingApp\Ai\Filament\Resources\PromptTypeResource;
+use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Section;
@@ -47,6 +48,8 @@ use Filament\Resources\Pages\EditRecord;
 
 class EditPromptType extends EditRecord
 {
+    use EditPageRedirection;
+
     protected static string $resource = PromptTypeResource::class;
 
     public function form(Form $form): Form

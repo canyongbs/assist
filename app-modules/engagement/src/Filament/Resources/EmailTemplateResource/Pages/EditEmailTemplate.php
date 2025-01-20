@@ -39,6 +39,7 @@ namespace AdvisingApp\Engagement\Filament\Resources\EmailTemplateResource\Pages;
 use AdvisingApp\Engagement\Filament\Resources\Actions\DraftTemplateWithAiAction;
 use AdvisingApp\Engagement\Filament\Resources\EmailTemplateResource;
 use AdvisingApp\Notification\Enums\NotificationChannel;
+use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Textarea;
@@ -49,6 +50,8 @@ use FilamentTiptapEditor\TiptapEditor;
 
 class EditEmailTemplate extends EditRecord
 {
+    use EditPageRedirection;
+
     protected static string $resource = EmailTemplateResource::class;
 
     public function form(Form $form): Form

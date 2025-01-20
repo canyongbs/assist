@@ -38,6 +38,7 @@ namespace App\Filament\Resources\NotificationSettingResource\Pages;
 
 use App\Filament\Forms\Components\ColorSelect;
 use App\Filament\Resources\NotificationSettingResource;
+use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\Textarea;
@@ -47,6 +48,8 @@ use Filament\Resources\Pages\EditRecord;
 
 class EditNotificationSetting extends EditRecord
 {
+    use EditPageRedirection;
+
     protected static string $resource = NotificationSettingResource::class;
 
     public function form(Form $form): Form

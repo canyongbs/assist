@@ -44,6 +44,7 @@ use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Filament\Forms\Components\EducatableSelect;
+use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Actions\Action;
@@ -65,6 +66,8 @@ use Illuminate\Database\Query\Expression;
 
 class EditEngagement extends EditRecord
 {
+    use EditPageRedirection;
+
     protected static string $resource = EngagementResource::class;
 
     public function form(Form $form): Form

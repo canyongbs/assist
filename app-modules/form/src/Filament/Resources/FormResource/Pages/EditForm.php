@@ -40,6 +40,7 @@ use AdvisingApp\Form\Actions\GenerateSubmissibleEmbedCode;
 use AdvisingApp\Form\Filament\Resources\FormResource;
 use AdvisingApp\Form\Filament\Resources\FormResource\Pages\Concerns\HasSharedFormConfiguration;
 use AdvisingApp\Form\Models\Form;
+use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Form as FilamentForm;
@@ -49,6 +50,7 @@ use Filament\Resources\Pages\EditRecord;
 class EditForm extends EditRecord
 {
     use HasSharedFormConfiguration;
+    use EditPageRedirection;
 
     protected static string $resource = FormResource::class;
 

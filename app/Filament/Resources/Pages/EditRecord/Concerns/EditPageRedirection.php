@@ -34,23 +34,19 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CaseManagement\Filament\Resources\SlaResource\Pages;
+namespace App\Filament\Resources\Pages\EditRecord\Concerns;
 
-use AdvisingApp\CaseManagement\Filament\Resources\SlaResource;
-use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
-use Filament\Actions;
-use Filament\Resources\Pages\EditRecord;
-
-class EditSla extends EditRecord
+trait EditPageRedirection
 {
-    use EditPageRedirection;
-
-    protected static string $resource = SlaResource::class;
-
-    protected function getHeaderActions(): array
+    public function getRedirectUrl(): ?string
     {
-        return [
-            Actions\DeleteAction::make(),
-        ];
+        /** @var class-string<Resource> $resource */
+        $resource = $this->getResource();
+
+        if ($resource::hasPage('view')) {
+            return $resource::getUrl('view', ['record' => $this->record]);
+        }
+
+        return null;
     }
 }

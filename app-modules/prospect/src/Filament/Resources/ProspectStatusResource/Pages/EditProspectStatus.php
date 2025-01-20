@@ -39,6 +39,7 @@ namespace AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource\Pages;
 use AdvisingApp\Prospect\Enums\ProspectStatusColorOptions;
 use AdvisingApp\Prospect\Enums\SystemProspectClassification;
 use AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource;
+use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Select;
@@ -48,6 +49,8 @@ use Filament\Resources\Pages\EditRecord;
 
 class EditProspectStatus extends EditRecord
 {
+    use EditPageRedirection;
+
     protected static string $resource = ProspectStatusResource::class;
 
     public function form(Form $form): Form

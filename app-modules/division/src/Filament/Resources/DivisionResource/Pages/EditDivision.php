@@ -39,6 +39,7 @@ namespace AdvisingApp\Division\Filament\Resources\DivisionResource\Pages;
 use AdvisingApp\Division\Filament\Resources\DivisionResource;
 use AdvisingApp\Division\Models\Division;
 use App\Features\DivisionIsDefault;
+use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use App\Models\NotificationSetting;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Select;
@@ -51,6 +52,8 @@ use FilamentTiptapEditor\TiptapEditor;
 
 class EditDivision extends EditRecord
 {
+    use EditPageRedirection;
+
     protected static string $resource = DivisionResource::class;
 
     protected ?bool $hasDatabaseTransactions = true;
