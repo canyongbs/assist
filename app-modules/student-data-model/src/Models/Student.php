@@ -324,6 +324,21 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
         )->withTimestamps();
     }
 
+    public function studentAddress(): HasMany
+    {
+        return $this->hasMany(StudentAddress::class, 'student_id');
+    }
+
+    public function studentEmailAddress(): HasMany
+    {
+        return $this->hasMany(StudentEmailAddress::class, 'student_id');
+    }
+
+    public function studentPhoneNumbers(): HasMany
+    {
+        return $this->hasMany(StudentPhoneNumber::class, 'student_id');
+    }
+
     public static function getLabel(): string
     {
         return 'student';
