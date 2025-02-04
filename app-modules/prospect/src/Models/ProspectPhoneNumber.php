@@ -48,6 +48,10 @@ class ProspectPhoneNumber extends BaseModel
         'is_mobile',
     ];
 
+    protected $casts = [
+        'is_mobile' => 'boolean',
+    ];
+
     public function prospect(): BelongsTo
     {
         return $this->belongsTo(Prospect::class);

@@ -48,6 +48,10 @@ class StudentPhoneNumber extends BaseModel
         'is_mobile',
     ];
 
+    protected $casts = [
+      'is_mobile' => 'boolean',
+    ];
+
     public function student(): BelongsTo
     {
         return $this->belongsTo(Student::class, 'student_id', 'sisid');
