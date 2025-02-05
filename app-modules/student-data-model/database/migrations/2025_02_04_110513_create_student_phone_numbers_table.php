@@ -43,12 +43,13 @@ return new class () extends Migration {
     {
         Schema::create('student_phone_numbers', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('student_id');
+            $table->string('sisid');
             $table->string('number');
             $table->unsignedInteger('ext')->nullable();
             $table->string('type')->nullable();
             $table->boolean('is_mobile')->default(false);
             $table->timestamps();
+            $table->foreign('sisid')->references('sisid')->on('students')->onDelete('cascade');
         });
     }
 

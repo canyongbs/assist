@@ -54,8 +54,8 @@ class ProspectEmailAddressFactory extends Factory
     {
         return [
             'prospect_id' => Prospect::factory(),
-            'address' => $this->faker->email,
-            'type' => $this->faker->words(10),
+            'address' => fake()->email(),
+            'type' => fake()->randomElement(['School', 'Personal', 'Work']),
         ];
     }
 }

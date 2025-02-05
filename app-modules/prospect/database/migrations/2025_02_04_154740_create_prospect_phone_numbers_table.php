@@ -43,7 +43,7 @@ return new class () extends Migration {
     {
         Schema::create('prospect_phone_numbers', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('prospect_id');
+            $table->foreignUuid('prospect_id')->constrained('prospects')->onDelete('cascade');
             $table->string('number');
             $table->unsignedInteger('ext')->nullable();
             $table->string('type')->nullable();

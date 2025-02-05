@@ -43,7 +43,7 @@ return new class () extends Migration {
     {
         Schema::create('student_addresses', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('student_id');
+            $table->string('sisid');
             $table->string('line_1')->nullable();
             $table->string('line_2')->nullable();
             $table->string('line_3')->nullable();
@@ -51,7 +51,9 @@ return new class () extends Migration {
             $table->string('state')->nullable();
             $table->string('postal')->nullable();
             $table->string('country')->nullable();
+            $table->string('type')->nullable();
             $table->timestamps();
+            $table->foreign('sisid')->references('sisid')->on('students')->onDelete('cascade');
         });
     }
 

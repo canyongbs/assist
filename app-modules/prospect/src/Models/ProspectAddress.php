@@ -36,11 +36,15 @@
 
 namespace AdvisingApp\Prospect\Models;
 
+use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class ProspectAddress extends BaseModel
+class ProspectAddress extends BaseModel implements Auditable
 {
+    use AuditableTrait;
+
     protected $fillable = [
         'line_1',
         'line_2',
@@ -49,6 +53,7 @@ class ProspectAddress extends BaseModel
         'state',
         'postal',
         'country',
+        'type',
     ];
 
     public function prospect(): BelongsTo

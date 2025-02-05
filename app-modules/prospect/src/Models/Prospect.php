@@ -308,17 +308,17 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
         )->withTimestamps();
     }
 
-    public function prospectAddress(): HasMany
+    public function addresses(): HasMany
     {
         return $this->hasMany(ProspectAddress::class);
     }
 
-    public function prospectEmailAddress(): HasMany
+    public function emailAddresses(): HasMany
     {
         return $this->hasMany(ProspectEmailAddress::class);
     }
 
-    public function prospectPhoneNumbers(): HasMany
+    public function phoneNumbers(): HasMany
     {
         return $this->hasMany(ProspectPhoneNumber::class);
     }

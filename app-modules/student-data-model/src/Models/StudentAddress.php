@@ -36,11 +36,15 @@
 
 namespace AdvisingApp\StudentDataModel\Models;
 
+use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class StudentAddress extends BaseModel
+class StudentAddress extends BaseModel implements Auditable
 {
+    use AuditableTrait;
+
     protected $fillable = [
         'line_1',
         'line_2',
@@ -49,10 +53,11 @@ class StudentAddress extends BaseModel
         'state',
         'postal',
         'country',
+        'type',
     ];
 
     public function student(): BelongsTo
     {
-        return $this->belongsTo(Student::class, 'student_id', 'sisid');
+        return $this->belongsTo(Student::class, 'sisid', 'sisid');
     }
 }

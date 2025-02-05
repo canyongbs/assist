@@ -54,10 +54,37 @@ class ProspectPhoneNumberFactory extends Factory
     {
         return [
             'prospect_id' => Prospect::factory(),
-            'number' => $this->faker->phoneNumber,
-            'ext' => $this->faker->randomNumber(),
-            'type' => $this->faker->words(10),
-            'is_mobile' => $this->faker->boolean,
+            'number' => fake()->phoneNumber(),
+            'ext' => null,
+            'type' => fake()->randomElement(['Home', 'Mobile', 'Work']),
+            'is_mobile' => fake()->boolean(),
         ];
+    }
+
+    public function notMobile(): Factory
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'is_mobile' => false,
+            ];
+        });
+    }
+
+    public function mobile(): Factory
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'is_mobile' => true,
+            ];
+        });
+    }
+
+    public function withExtension(): Factory
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'ext' => fake()->randomNumber(),
+            ];
+        });
     }
 }

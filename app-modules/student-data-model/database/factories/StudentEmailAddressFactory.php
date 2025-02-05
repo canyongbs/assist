@@ -53,9 +53,9 @@ class StudentEmailAddressFactory extends Factory
     public function definition(): array
     {
         return [
-            'student_id' => Student::factory(),
-            'address' => $this->faker->email,
-            'type' => $this->faker->words(10),
+            'sisid' => Student::factory(),
+            'address' => fake()->email(),
+            'type' => fake()->randomElement(['School', 'Personal', 'Work']),
         ];
     }
 }

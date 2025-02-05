@@ -43,7 +43,7 @@ return new class () extends Migration {
     {
         Schema::create('prospect_email_addresses', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('prospect_id')->constrained('prospects');
+            $table->foreignUuid('prospect_id')->constrained('prospects')->onDelete('cascade');
             $table->string('address');
             $table->string('type')->nullable();
             $table->timestamps();
