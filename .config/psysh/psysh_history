@@ -1,0 +1,14 @@
+_HiStOrY_V2_
+AdvisingApp\134StudentDataModel\134Models\134StudentPhoneNumber::factory()->create();
+AdvisingApp\134StudentDataModel\134Models\134StudentPhoneNumber::factory()->canRecieveSms()->create();
+AdvisingApp\134StudentDataModel\134Models\134StudentPhoneNumber::factory()->canNotRecieveSms()->create();
+clear
+AdvisingApp\134Prospect\134Models\134ProspectPhoneNumber::factory()->create();
+AdvisingApp\134Prospect\134Models\134ProspectPhoneNumber::factory()->create();
+AdvisingApp\134Prospect\134Models\134ProspectPhoneNumber::factory()->create();
+AdvisingApp\134Prospect\134Models\134ProspectPhoneNumber::factory()->canRecieveSms()->create();
+AdvisingApp\134Prospect\134Models\134ProspectPhoneNumber::factory()->canRecieveSms()->create();
+clear
+AdvisingApp\134Prospect\134Models\134ProspectPhoneNumber::factory()->canNotRecieveSms()->create();
+AdvisingApp\134Prospect\134Models\134ProspectPhoneNumber::factory()->canNotRecieveSms()->create();
+exit

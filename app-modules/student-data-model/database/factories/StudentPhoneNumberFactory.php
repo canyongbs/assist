@@ -57,24 +57,24 @@ class StudentPhoneNumberFactory extends Factory
             'number' => fake()->phoneNumber(),
             'ext' => null,
             'type' => fake()->randomElement(['Home', 'Mobile', 'Work']),
-            'is_mobile' => fake()->boolean(),
+            'can_recieve_sms' => fake()->boolean(),
         ];
     }
 
-    public function notMobile(): Factory
+    public function canNotRecieveSms(): Factory
     {
         return $this->state(function (array $attributes) {
             return [
-                'is_mobile' => false,
+                'can_recieve_sms' => false,
             ];
         });
     }
 
-    public function mobile(): Factory
+    public function canRecieveSms(): Factory
     {
         return $this->state(function (array $attributes) {
             return [
-                'is_mobile' => true,
+                'can_recieve_sms' => true,
             ];
         });
     }
