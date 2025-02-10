@@ -50,6 +50,7 @@ class ProspectPhoneNumber extends BaseModel implements Auditable
         'ext',
         'type',
         'is_mobile',
+        'order',
     ];
 
     protected $casts = [

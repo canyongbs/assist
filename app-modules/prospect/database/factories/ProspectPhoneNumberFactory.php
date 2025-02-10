@@ -44,7 +44,8 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  * @extends Factory<ProspectPhoneNumber>
  */
 class ProspectPhoneNumberFactory extends Factory
-{
+{   
+    private int $maxOrder;
     /**
      * Define the model's default state.
      *
@@ -58,6 +59,7 @@ class ProspectPhoneNumberFactory extends Factory
             'ext' => null,
             'type' => fake()->randomElement(['Home', 'Mobile', 'Work']),
             'can_recieve_sms' => fake()->boolean(),
+            'order' => $this->getNewOrder(),
         ];
     }
 
@@ -86,5 +88,15 @@ class ProspectPhoneNumberFactory extends Factory
                 'ext' => fake()->randomNumber(),
             ];
         });
+    }
+
+    public function getNewOrder(): int
+    {
+        return $this->maxOrder = $this->getMaxOrder() + 1;
+    }
+
+    public function getMaxOrder(): int
+    {
+        return $this->maxOrder ??= ProspectPhoneNumber::max('order') ?? 0;
     }
 }

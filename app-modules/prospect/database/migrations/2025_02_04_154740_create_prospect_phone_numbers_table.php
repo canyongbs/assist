@@ -48,7 +48,10 @@ return new class () extends Migration {
             $table->unsignedInteger('ext')->nullable();
             $table->string('type')->nullable();
             $table->boolean('can_recieve_sms')->default(false);
+            $table->integer('order');
             $table->timestamps();
+
+            $table->index(['prospect_id', 'order']);
         });
     }
 

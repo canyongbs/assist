@@ -48,6 +48,7 @@ class StudentEmailAddress extends BaseModel implements Auditable
     protected $fillable = [
         'address',
         'type',
+        'order',
     ];
 
     public function student(): BelongsTo

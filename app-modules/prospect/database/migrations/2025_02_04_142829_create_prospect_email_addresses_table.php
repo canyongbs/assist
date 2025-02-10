@@ -46,7 +46,10 @@ return new class () extends Migration {
             $table->foreignUuid('prospect_id')->constrained('prospects')->onDelete('cascade');
             $table->string('address');
             $table->string('type')->nullable();
+            $table->integer('order');
             $table->timestamps();
+
+            $table->index(['prospect_id', 'order']);
         });
     }
 

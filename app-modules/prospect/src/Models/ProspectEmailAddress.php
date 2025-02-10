@@ -48,6 +48,7 @@ class ProspectEmailAddress extends BaseModel implements Auditable
     protected $fillable = [
         'address',
         'type',
+        'order',
     ];
 
     public function prospect(): BelongsTo

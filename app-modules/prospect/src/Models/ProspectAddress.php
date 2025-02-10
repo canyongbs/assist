@@ -54,6 +54,7 @@ class ProspectAddress extends BaseModel implements Auditable
         'postal',
         'country',
         'type',
+        'order',
     ];
 
     public function prospect(): BelongsTo

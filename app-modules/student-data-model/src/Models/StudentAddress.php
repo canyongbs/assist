@@ -54,6 +54,7 @@ class StudentAddress extends BaseModel implements Auditable
         'postal',
         'country',
         'type',
+        'order',
     ];
 
     public function student(): BelongsTo
