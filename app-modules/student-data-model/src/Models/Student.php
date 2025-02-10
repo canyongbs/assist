@@ -339,6 +339,16 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
         return $this->hasMany(StudentPhoneNumber::class, 'sisid');
     }
 
+    public function primaryEmail()
+    {
+        return $this->belongsTo(StudentEmailAddress::class, 'primary_email');
+    }
+
+    public function primaryPhone()
+    {
+        return $this->belongsTo(StudentPhoneNumber::class, 'primary_phone');
+    }
+
     public static function getLabel(): string
     {
         return 'student';
