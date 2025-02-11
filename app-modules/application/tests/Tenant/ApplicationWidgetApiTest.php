@@ -40,6 +40,7 @@ use AdvisingApp\Application\Models\ApplicationAuthentication;
 use AdvisingApp\Form\Http\Middleware\EnsureSubmissibleIsEmbeddableAndAuthorized;
 use AdvisingApp\Prospect\Models\Prospect;
 use App\Settings\LicenseSettings;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\URL;
 
 use function Pest\Laravel\get;
@@ -99,7 +100,7 @@ test('request-authentication is protected with proper feature access control', f
 
     post(URL::signedRoute(
         name: 'applications.request-authentication',
-        parameters: ['application' => $application, 'email' => $prospect->email],
+        parameters: ['application' => $application, 'email' => $prospect->primaryEmail->address],
         absolute: false,
     ))
         ->assertForbidden()
@@ -113,7 +114,7 @@ test('request-authentication is protected with proper feature access control', f
 
     post(URL::signedRoute(
         name: 'applications.request-authentication',
-        parameters: ['application' => $application, 'email' => $prospect->email],
+        parameters: ['application' => $application, 'email' => $prospect->primaryEmail->address],
         absolute: false,
     ))
         ->assertSuccessful();

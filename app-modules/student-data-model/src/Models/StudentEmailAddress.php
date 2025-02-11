@@ -46,6 +46,7 @@ class StudentEmailAddress extends BaseModel implements Auditable
     use AuditableTrait;
 
     protected $fillable = [
+        'sisid',
         'address',
         'type',
         'order',

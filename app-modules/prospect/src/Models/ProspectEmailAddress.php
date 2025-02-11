@@ -46,6 +46,7 @@ class ProspectEmailAddress extends BaseModel implements Auditable
     use AuditableTrait;
 
     protected $fillable = [
+        'prospect_id',
         'address',
         'type',
         'order',

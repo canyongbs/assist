@@ -40,6 +40,6 @@ trait NotifiableViaSms
 {
     public function routeNotificationForSms(): string
     {
-        return $this->mobile;
+        return $this->primaryPhone->number;
     }
 }

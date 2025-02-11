@@ -37,8 +37,12 @@
 namespace AdvisingApp\Prospect\Database\Factories;
 
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Prospect\Models\ProspectAddress;
+use AdvisingApp\Prospect\Models\ProspectEmailAddress;
+use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
 use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
+use App\Features\ProspectStudentRefactor;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -64,8 +68,6 @@ class ProspectFactory extends Factory
             'email' => fake()->unique()->email(),
             'email_2' => fake()->email(),
             'mobile' => fake()->phoneNumber(),
-            'sms_opt_out' => fake()->boolean(),
-            'email_bounce' => fake()->boolean(),
             'phone' => fake()->phoneNumber(),
             'address' => fake()->streetAddress(),
             'address_2' => fake()->secondaryAddress(),
@@ -73,9 +75,27 @@ class ProspectFactory extends Factory
             'city' => fake()->city(),
             'state' => fake()->stateAbbr(),
             'postal' => str(fake()->postcode())->before('-')->toString(),
+            'sms_opt_out' => fake()->boolean(),
+            'email_bounce' => fake()->boolean(),
             'birthdate' => fake()->date(),
             'hsgrad' => fake()->year(),
             'created_by_id' => User::factory(),
         ];
+    }
+
+    public function configure(): static
+    {
+        return $this->afterCreating(function (Prospect $prospect) {
+            if (ProspectStudentRefactor::active()) {
+                $email = ProspectEmailAddress::factory()->create(['prospect_id' => $prospect->getKey()]);
+                $phone = ProspectPhoneNumber::factory()->create(['prospect_id' => $prospect->getKey()]);
+                $address = ProspectAddress::factory()->create(['prospect_id' => $prospect->getKey()]);
+                $prospect->update([
+                  'primary_email_id' => $email->getKey(),
+                  'primary_phone_id' => $phone->getKey(),
+                  'primary_address_id' => $address->getKey()
+                ]);
+            }
+        });
     }
 }

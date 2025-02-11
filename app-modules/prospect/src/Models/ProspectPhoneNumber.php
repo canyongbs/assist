@@ -46,6 +46,7 @@ class ProspectPhoneNumber extends BaseModel implements Auditable
     use AuditableTrait;
 
     protected $fillable = [
+        'prospect_id',
         'number',
         'ext',
         'type',

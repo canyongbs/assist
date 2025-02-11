@@ -46,6 +46,7 @@ class StudentPhoneNumber extends BaseModel implements Auditable
     use AuditableTrait;
 
     protected $fillable = [
+        'sisid',
         'number',
         'ext',
         'type',

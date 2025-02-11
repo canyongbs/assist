@@ -63,6 +63,7 @@ use AdvisingApp\Task\Models\Task;
 use AdvisingApp\Timeline\Models\Contracts\HasFilamentResource;
 use AdvisingApp\Timeline\Models\Timeline;
 use App\Enums\TagType;
+use App\Features\ProspectStudentRefactor;
 use App\Models\Authenticatable;
 use App\Models\Scopes\HasLicense;
 use App\Models\Tag;
@@ -82,6 +83,7 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as BaseAuthenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Notifications\Notification;
 use Laravel\Sanctum\HasApiTokens;
 use OwenIt\Auditing\Contracts\Auditable;
 use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
@@ -365,7 +367,7 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
 
     public function canRecieveSms(): bool
     {
-        return filled($this->mobile);
+        return $this->primaryPhone && $this->primaryPhone->number && $this->primaryPhone->can_recieve_sms;
     }
 
     public function tags(): MorphToMany
@@ -415,6 +417,20 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
     {
         return Attribute::make(
             get: function (mixed $value, array $attributes) {
+
+                if(ProspectStudentRefactor::active()) {
+                    $address = $this?->primaryAddress;
+                    $addressLine = trim("{$address['line_1']} {$address['line_2']} {$address['line_3']}");
+
+                    return trim(sprintf(
+                        '%s %s %s %s',
+                        ! empty($addressLine) ? $addressLine . ',' : '',
+                        ! empty($address['city']) ? $address['city'] . ',' : '',
+                        ! empty($address['state']) ? $address['state'] : '',
+                        ! empty($address['postal']) ? $address['postal'] : '',
+                    ));
+                }
+
                 $addressLine = trim("{$attributes['address']} {$attributes['address_2']} {$attributes['address_3']}");
 
                 return trim(sprintf(
@@ -426,5 +442,15 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
                 ));
             }
         );
+    }
+
+    /**
+     * Route notifications for the mail channel.
+     *
+     * @return  array<string, string>|string
+     */
+    public function routeNotificationForMail(Notification $notification): array|string
+    {
+        return $this->primaryEmail->address;
     }
 }

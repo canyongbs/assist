@@ -50,6 +50,7 @@ use AdvisingApp\Segment\Actions\TranslateSegmentFilters;
 use AdvisingApp\Segment\Enums\SegmentModel;
 use AdvisingApp\Segment\Models\Segment;
 use App\Enums\TagType;
+use App\Features\ProspectStudentRefactor;
 use App\Filament\Tables\Columns\IdColumn;
 use App\Models\Tag;
 use Filament\Actions\CreateAction;
@@ -89,10 +90,22 @@ class ListProspects extends ListRecords
                 TextColumn::make('email')
                     ->label('Email')
                     ->searchable()
+                    ->visible(!ProspectStudentRefactor::active())
+                    ->sortable(),
+                TextColumn::make('primaryEmail.address')
+                    ->label('Email')
+                    ->searchable()
+                    ->visible(ProspectStudentRefactor::active())
                     ->sortable(),
                 TextColumn::make('mobile')
                     ->label('Mobile')
                     ->searchable()
+                    ->visible(!ProspectStudentRefactor::active())
+                    ->sortable(),
+                TextColumn::make('primaryPhone.number')
+                    ->label('Mobile')
+                    ->searchable()
+                    ->visible(ProspectStudentRefactor::active())
                     ->sortable(),
                 TextColumn::make('status.name')
                     ->badge()
