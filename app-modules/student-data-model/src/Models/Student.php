@@ -144,6 +144,9 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
         'lastlmslogin',
         'f_e_term',
         'mr_e_term',
+        'primary_email_id',
+        'primary_phone_id',
+        'primary_address_id',
     ];
 
     protected $casts = [
@@ -341,12 +344,17 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
 
     public function primaryEmail()
     {
-        return $this->belongsTo(StudentEmailAddress::class, 'primary_email');
+        return $this->belongsTo(StudentEmailAddress::class, 'primary_email_id', 'id');
     }
 
     public function primaryPhone()
     {
-        return $this->belongsTo(StudentPhoneNumber::class, 'primary_phone');
+        return $this->belongsTo(StudentPhoneNumber::class, 'primary_phone_id', 'id');
+    }
+
+    public function primaryAddress()
+    {
+        return $this->belongsTo(StudentAddress::class, 'primary_address_id', 'id');
     }
 
     public static function getLabel(): string

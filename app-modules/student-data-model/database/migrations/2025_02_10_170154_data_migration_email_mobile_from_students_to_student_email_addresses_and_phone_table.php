@@ -82,11 +82,16 @@ return new class () extends Migration {
                         ->where('sisid', $student->sisid)
                         ->first();
 
+                    $primaryAddress = DB::table('student_addresses')
+                        ->where('sisid', $student->sisid)
+                        ->first();
+
                     DB::table('students')
                         ->where('sisid', $student->sisid)
                         ->update([
-                            'primary_email' => $primaryEmail->id ?? null,
-                            'primary_phone' => $primaryPhone->id ?? null,
+                            'primary_email_id' => $primaryEmail->id ?? null,
+                            'primary_phone_id' => $primaryPhone->id ?? null,
+                            'primary_address_id' => $primaryAddress->id ?? null,
                         ]);
                 }
             });
@@ -100,8 +105,9 @@ return new class () extends Migration {
 
         DB::table('students')
             ->update([
-                'primary_email' => null,
-                'primary_phone' => null,
+                'primary_email_id' => null,
+                'primary_phone_id' => null,
+                'primary_address_id' => null,
             ]);
 
         DB::table('student_email_addresses')

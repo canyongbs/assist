@@ -82,11 +82,16 @@ return new class () extends Migration {
                         ->where('prospect_id', $prospect->id)
                         ->first();
 
+                    $primaryAddress = DB::table('prospect_addresses')
+                        ->where('prospect_id', $prospect->id)
+                        ->first();
+
                     DB::table('prospects')
                         ->where('id', $prospect->id)
                         ->update([
-                            'primary_email' => $primaryEmail->id ?? null,
-                            'primary_phone' => $primaryPhone->id ?? null,
+                            'primary_email_id' => $primaryEmail->id ?? null,
+                            'primary_phone_id' => $primaryPhone->id ?? null,
+                            'primary_address_id' => $primaryAddress->id ?? null,
                         ]);
                 }
             });
@@ -100,8 +105,9 @@ return new class () extends Migration {
 
         DB::table('prospects')
             ->update([
-                'primary_email' => null,
-                'primary_phone' => null,
+                'primary_email_id' => null,
+                'primary_phone_id' => null,
+                'primary_address_id' => null,
             ]);
 
         DB::table('prospect_email_addresses')

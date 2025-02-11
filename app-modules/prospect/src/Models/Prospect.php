@@ -134,6 +134,9 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
         'hsgrad',
         'assigned_to_id',
         'created_by_id',
+        'primary_email_id',
+        'primary_phone_id',
+        'primary_address_id',
     ];
 
     protected $casts = [
@@ -325,12 +328,17 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
 
     public function primaryEmail()
     {
-        return $this->belongsTo(ProspectEmailAddress::class, 'primary_email');
+        return $this->belongsTo(ProspectEmailAddress::class, 'primary_email_id', 'id');
     }
 
     public function primaryPhone()
     {
-        return $this->belongsTo(ProspectPhoneNumber::class, 'primary_phone');
+        return $this->belongsTo(ProspectPhoneNumber::class, 'primary_phone_id', 'id');
+    }
+
+    public function primaryAddress()
+    {
+        return $this->belongsTo(ProspectAddress::class, 'primary_address_id', 'id');
     }
 
     public static function getLabel(): string
