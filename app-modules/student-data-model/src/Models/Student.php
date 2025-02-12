@@ -63,6 +63,7 @@ use AdvisingApp\Task\Models\Task;
 use AdvisingApp\Timeline\Models\Contracts\HasFilamentResource;
 use AdvisingApp\Timeline\Models\Timeline;
 use App\Enums\TagType;
+use App\Features\ProspectStudentRefactor;
 use App\Models\Authenticatable;
 use App\Models\Scopes\HasLicense;
 use App\Models\Tag;
@@ -78,6 +79,7 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as BaseAuthenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Notifications\Notification;
 use Laravel\Sanctum\HasApiTokens;
 use OwenIt\Auditing\Contracts\Auditable;
 use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
@@ -329,17 +331,17 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
 
     public function addresses(): HasMany
     {
-        return $this->hasMany(StudentAddress::class, 'sisid');
+        return $this->hasMany(StudentAddress::class, 'sisid','sisid');
     }
 
     public function emailAddresses(): HasMany
     {
-        return $this->hasMany(StudentEmailAddress::class, 'sisid');
+        return $this->hasMany(StudentEmailAddress::class, 'sisid','sisid');
     }
 
     public function phoneNumbers(): HasMany
     {
-        return $this->hasMany(StudentPhoneNumber::class, 'sisid');
+        return $this->hasMany(StudentPhoneNumber::class, 'sisid','sisid');
     }
 
     public function primaryEmail()
@@ -364,7 +366,7 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
 
     public function canRecieveSms(): bool
     {
-        return filled($this->mobile);
+        return $this->primaryPhone && $this->primaryPhone->number && $this->primaryPhone->can_recieve_sms;
     }
 
     public function tags(): MorphToMany
@@ -380,6 +382,20 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
             ->withPivot(['tag_id'])
             ->withTimestamps()
             ->where('type', TagType::Student);
+    }
+
+    /**
+     * Route notifications for the mail channel.
+     *
+     * @return  array<string, string>|string
+     */
+    public function routeNotificationForMail(Notification $notification): array|string
+    {
+        if (ProspectStudentRefactor::active()) {
+            return $this->primaryEmail->address;
+        }
+
+        return 'email';
     }
 
     protected static function booted(): void
@@ -409,6 +425,24 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
     {
         return Attribute::make(
             get: function (mixed $value, array $attributes) {
+                if (ProspectStudentRefactor::active()) {
+                    $address = $this->primaryAddress;
+
+                    if (! $address) {
+                        return null;
+                    }
+
+                    $addressLine = trim("{$address['line_1']} {$address['line_2']} {$address['line_3']}");
+
+                    return trim(sprintf(
+                        '%s %s %s %s',
+                        ! empty($addressLine) ? $addressLine . ',' : '',
+                        ! empty($address['city']) ? $address['city'] . ',' : '',
+                        ! empty($address['state']) ? $address['state'] : '',
+                        ! empty($address['postal']) ? $address['postal'] : '',
+                    ));
+                }
+
                 $addressLine = trim("{$attributes['address']} {$attributes['address2']} {$attributes['address3']}");
 
                 return trim(sprintf(

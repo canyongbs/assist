@@ -44,10 +44,14 @@ use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\Manage
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ViewStudent;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ViewStudentActivityFeed;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Features\ProspectStudentRefactor;
 use App\Filament\Resources\Concerns\HasGlobalSearchResultScoring;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Connection;
+
+use function Filament\Support\generate_search_column_expression;
 
 class StudentResource extends Resource
 {
@@ -61,18 +65,77 @@ class StudentResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'full_name';
 
+    public static function getGlobalSearchEloquentQuery(): Builder
+    {
+        return parent::getGlobalSearchEloquentQuery()->with(['emailAddresses:id,address', 'phoneNumbers:id,number']);
+    }
+
     public static function modifyGlobalSearchQuery(Builder $query, string $search): void
     {
+        $query->leftJoinRelationship('primaryEmail');
+
         static::scoreGlobalSearchResults($query, $search, [
             'full_name' => 100,
-            'email' => 75,
-            'email_2' => 75,
+            ...(
+              ProspectStudentRefactor::active()
+              ? ['student_email_addresses.address' => 75]
+              : ['email' => 75,'email_2' => 75]
+            )
         ]);
     }
 
     public static function getGloballySearchableAttributes(): array
     {
-        return ['sisid', 'otherid', 'full_name', 'email', 'email_2', 'mobile', 'phone', 'preferred'];
+        return [
+          'sisid', 
+          'otherid', 
+          'full_name', 
+          ...(ProspectStudentRefactor::active()
+          ? ['emailAddresses.address', 'phoneNumbers.number']
+          : ['email', 'email_2', 'mobile', 'phone']
+          ),
+          'preferred'
+        ];
+    }
+
+    /**
+     * @param  array<string>  $searchAttributes
+     */
+    protected static function applyGlobalSearchAttributeConstraint(Builder $query, string $search, array $searchAttributes, bool &$isFirst): Builder
+    {
+        $query->getModel();
+
+        $isForcedCaseInsensitive = static::isGlobalSearchForcedCaseInsensitive();
+
+        /** @var Connection $databaseConnection */
+        $databaseConnection = $query->getConnection();
+
+        foreach ($searchAttributes as $searchAttribute) {
+            $whereClause = $isFirst ? 'where' : 'orWhere';
+
+            $query->when(
+                str($searchAttribute)->contains('.'),
+                function (Builder $query) use ($databaseConnection, $isForcedCaseInsensitive, $searchAttribute, $search, $whereClause): Builder {
+                    return $query->{"{$whereClause}Has"}(
+                        (string) str($searchAttribute)->beforeLast('.'),
+                        fn (Builder $query) => $query->where(
+                            generate_search_column_expression($query->qualifyColumn((string) str($searchAttribute)->afterLast('.')), $isForcedCaseInsensitive, $databaseConnection),
+                            'like',
+                            "%{$search}%",
+                        ),
+                    );
+                },
+                fn (Builder $query) => $query->{$whereClause}(
+                    generate_search_column_expression($query->qualifyColumn($searchAttribute), $isForcedCaseInsensitive, $databaseConnection),
+                    'like',
+                    "%{$search}%",
+                ),
+            );
+
+            $isFirst = false;
+        }
+
+        return $query;
     }
 
     public static function getGlobalSearchResultDetails(Model $record): array
@@ -80,9 +143,8 @@ class StudentResource extends Resource
         return array_filter([
             'Student ID' => $record->sisid,
             'Other ID' => $record->otherid,
-            'Email Address' => collect([$record->email, $record->email_id])->filter()->implode(', '),
-            'Mobile' => $record->mobile,
-            'Phone' => $record->phone,
+            'Email Address' => ProspectStudentRefactor::active() ? $record?->primaryEmail->address : collect([$record->email, $record->email_id])->filter()->implode(', ') ,
+            'Phone' => ProspectStudentRefactor::active() ? $record?->primaryPhone->number : collect([$record->mobile, $record->phone])->filter()->implode(', '),
             'Preferred Name' => $record->preferred,
         ], fn (mixed $value): bool => filled($value));
     }

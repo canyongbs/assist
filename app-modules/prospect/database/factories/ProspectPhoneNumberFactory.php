@@ -44,8 +44,9 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  * @extends Factory<ProspectPhoneNumber>
  */
 class ProspectPhoneNumberFactory extends Factory
-{   
-    // private int $maxOrder;
+{
+    private int $maxOrder;
+
     /**
      * Define the model's default state.
      *

@@ -385,6 +385,20 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
             ->where('type', TagType::Prospect);
     }
 
+    /**
+     * Route notifications for the mail channel.
+     *
+     * @return  array<string, string>|string
+     */
+    public function routeNotificationForMail(Notification $notification): array|string
+    {
+        if (ProspectStudentRefactor::active()) {
+            return $this->primaryEmail->address;
+        }
+
+        return 'email';
+    }
+
     protected static function booted(): void
     {
         static::addGlobalScope('licensed', function (Builder $builder) {
@@ -417,9 +431,13 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
     {
         return Attribute::make(
             get: function (mixed $value, array $attributes) {
+                if (ProspectStudentRefactor::active()) {
+                    $address = $this->primaryAddress;
 
-                if(ProspectStudentRefactor::active()) {
-                    $address = $this?->primaryAddress;
+                    if (! $address) {
+                        return null;
+                    }
+
                     $addressLine = trim("{$address['line_1']} {$address['line_2']} {$address['line_3']}");
 
                     return trim(sprintf(
@@ -442,15 +460,5 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
                 ));
             }
         );
-    }
-
-    /**
-     * Route notifications for the mail channel.
-     *
-     * @return  array<string, string>|string
-     */
-    public function routeNotificationForMail(Notification $notification): array|string
-    {
-        return $this->primaryEmail->address;
     }
 }
