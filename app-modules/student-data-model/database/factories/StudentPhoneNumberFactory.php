@@ -46,6 +46,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 class StudentPhoneNumberFactory extends Factory
 {
     private int $maxOrder;
+
     /**
      * Define the model's default state.
      *

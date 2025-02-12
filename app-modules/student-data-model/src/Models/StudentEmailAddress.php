@@ -41,6 +41,9 @@ use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use OwenIt\Auditing\Contracts\Auditable;
 
+/**
+ * @mixin IdeHelperStudentEmailAddress
+ */
 class StudentEmailAddress extends BaseModel implements Auditable
 {
     use AuditableTrait;

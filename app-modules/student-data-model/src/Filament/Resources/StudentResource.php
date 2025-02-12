@@ -47,11 +47,12 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use App\Features\ProspectStudentRefactor;
 use App\Filament\Resources\Concerns\HasGlobalSearchResultScoring;
 use Filament\Resources\Resource;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Connection;
 
 use function Filament\Support\generate_search_column_expression;
+
+use Illuminate\Database\Connection;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
 class StudentResource extends Resource
 {
@@ -77,24 +78,49 @@ class StudentResource extends Resource
         static::scoreGlobalSearchResults($query, $search, [
             'full_name' => 100,
             ...(
-              ProspectStudentRefactor::active()
+                ProspectStudentRefactor::active()
               ? ['student_email_addresses.address' => 75]
-              : ['email' => 75,'email_2' => 75]
-            )
+              : ['email' => 75, 'email_2' => 75]
+            ),
         ]);
     }
 
     public static function getGloballySearchableAttributes(): array
     {
         return [
-          'sisid', 
-          'otherid', 
-          'full_name', 
-          ...(ProspectStudentRefactor::active()
-          ? ['emailAddresses.address', 'phoneNumbers.number']
-          : ['email', 'email_2', 'mobile', 'phone']
-          ),
-          'preferred'
+            'sisid',
+            'otherid',
+            'full_name',
+            ...(
+                ProspectStudentRefactor::active()
+            ? ['emailAddresses.address', 'phoneNumbers.number']
+            : ['email', 'email_2', 'mobile', 'phone']
+            ),
+            'preferred',
+        ];
+    }
+
+    public static function getGlobalSearchResultDetails(Model $record): array
+    {
+        return array_filter([
+            'Student ID' => $record->sisid,
+            'Other ID' => $record->otherid,
+            'Email Address' => ProspectStudentRefactor::active() ? $record?->primaryEmail->address : collect([$record->email, $record->email_id])->filter()->implode(', '),
+            'Phone' => ProspectStudentRefactor::active() ? $record?->primaryPhone->number : collect([$record->mobile, $record->phone])->filter()->implode(', '),
+            'Preferred Name' => $record->preferred,
+        ], fn (mixed $value): bool => filled($value));
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => ListStudents::route('/'),
+            'view' => ViewStudent::route('/{record}'),
+            'activity-feed' => ViewStudentActivityFeed::route('/{record}/activity'),
+            'alerts' => ManageStudentAlerts::route('/{record}/alerts'),
+            'care-team' => ManageStudentCareTeam::route('/{record}/care-team'),
+            'subscriptions' => ManageStudentSubscriptions::route('/{record}/subscriptions'),
+            'tasks' => ManageStudentTasks::route('/{record}/tasks'),
         ];
     }
 
@@ -136,29 +162,5 @@ class StudentResource extends Resource
         }
 
         return $query;
-    }
-
-    public static function getGlobalSearchResultDetails(Model $record): array
-    {
-        return array_filter([
-            'Student ID' => $record->sisid,
-            'Other ID' => $record->otherid,
-            'Email Address' => ProspectStudentRefactor::active() ? $record?->primaryEmail->address : collect([$record->email, $record->email_id])->filter()->implode(', ') ,
-            'Phone' => ProspectStudentRefactor::active() ? $record?->primaryPhone->number : collect([$record->mobile, $record->phone])->filter()->implode(', '),
-            'Preferred Name' => $record->preferred,
-        ], fn (mixed $value): bool => filled($value));
-    }
-
-    public static function getPages(): array
-    {
-        return [
-            'index' => ListStudents::route('/'),
-            'view' => ViewStudent::route('/{record}'),
-            'activity-feed' => ViewStudentActivityFeed::route('/{record}/activity'),
-            'alerts' => ManageStudentAlerts::route('/{record}/alerts'),
-            'care-team' => ManageStudentCareTeam::route('/{record}/care-team'),
-            'subscriptions' => ManageStudentSubscriptions::route('/{record}/subscriptions'),
-            'tasks' => ManageStudentTasks::route('/{record}/tasks'),
-        ];
     }
 }

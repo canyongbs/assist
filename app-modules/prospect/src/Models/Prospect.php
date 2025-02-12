@@ -328,17 +328,17 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
         return $this->hasMany(ProspectPhoneNumber::class);
     }
 
-    public function primaryEmail()
+    public function primaryEmail(): BelongsTo
     {
         return $this->belongsTo(ProspectEmailAddress::class, 'primary_email_id', 'id');
     }
 
-    public function primaryPhone()
+    public function primaryPhone(): BelongsTo
     {
         return $this->belongsTo(ProspectPhoneNumber::class, 'primary_phone_id', 'id');
     }
 
-    public function primaryAddress()
+    public function primaryAddress(): BelongsTo
     {
         return $this->belongsTo(ProspectAddress::class, 'primary_address_id', 'id');
     }

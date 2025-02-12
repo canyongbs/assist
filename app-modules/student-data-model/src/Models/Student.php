@@ -331,17 +331,17 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
 
     public function addresses(): HasMany
     {
-        return $this->hasMany(StudentAddress::class, 'sisid','sisid');
+        return $this->hasMany(StudentAddress::class, 'sisid', 'sisid');
     }
 
     public function emailAddresses(): HasMany
     {
-        return $this->hasMany(StudentEmailAddress::class, 'sisid','sisid');
+        return $this->hasMany(StudentEmailAddress::class, 'sisid', 'sisid');
     }
 
     public function phoneNumbers(): HasMany
     {
-        return $this->hasMany(StudentPhoneNumber::class, 'sisid','sisid');
+        return $this->hasMany(StudentPhoneNumber::class, 'sisid', 'sisid');
     }
 
     public function primaryEmail()

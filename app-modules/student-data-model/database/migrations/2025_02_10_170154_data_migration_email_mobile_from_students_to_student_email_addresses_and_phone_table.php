@@ -20,19 +20,18 @@ return new class () extends Migration {
                             'sisid' => $student->sisid,
                             'address' => $student->email,
                             'type' => 'Personal',
-                            'order' => 1
+                            'order' => 1,
                         ]);
 
-
-                    if(!blank($student->email_2)) {
+                    if (! blank($student->email_2)) {
                         DB::table('student_email_addresses')
-                        ->insert([
-                            'id' => (string) Str::orderedUuid(),
-                            'sisid' => $student->sisid,
-                            'address' => $student->email_2,
-                            'type' => 'Other',
-                            'order' => 2
-                        ]);
+                            ->insert([
+                                'id' => (string) Str::orderedUuid(),
+                                'sisid' => $student->sisid,
+                                'address' => $student->email_2,
+                                'type' => 'Other',
+                                'order' => 2,
+                            ]);
                     }
 
                     if (! blank($student->mobile)) {
@@ -43,7 +42,7 @@ return new class () extends Migration {
                                 'number' => $student->mobile,
                                 'can_recieve_sms' => true,
                                 'type' => 'Mobile',
-                                'order' => 1
+                                'order' => 1,
                             ]);
                     }
 
@@ -55,7 +54,7 @@ return new class () extends Migration {
                                 'number' => $student->phone,
                                 'can_recieve_sms' => false,
                                 'type' => 'Phone',
-                                'order' => 2
+                                'order' => 2,
                             ]);
                     }
 
@@ -70,7 +69,7 @@ return new class () extends Migration {
                                 'city' => $student->city,
                                 'state' => $student->state,
                                 'postal' => $student->postal,
-                                'order' => 1
+                                'order' => 1,
                             ]);
                     }
 
@@ -122,4 +121,3 @@ return new class () extends Migration {
         DB::commit();
     }
 };
-

@@ -262,47 +262,45 @@ class StudentImporter extends Importer
         return $body;
     }
 
-    public function afterCreate():void
+    public function afterCreate(): void
     {
-       if(ProspectStudentRefactor::active()){
-         /** @var Prospect $record */
-         $record = $this->record;
+        if (ProspectStudentRefactor::active()) {
+            /** @var Prospect $record */
+            $record = $this->record;
 
-         $primaryEmail = $record->emailAddresses()->create([
-             'address' => $this->data['email'],
-             'order' => DB::raw("(SELECT COALESCE(MAX(\"order\"), 0) + 1 FROM student_email_addresses WHERE sisid = '$record->id')")
-         ]);
- 
-         $record->primaryEmail()->associate($primaryEmail);
- 
-         if(!blank($this->data['mobile'])){
- 
-             $primaryMobile = $record->phoneNumbers()->create([
-                 'number' => $this->data['mobile'],
-                 'type' => 'Mobile',
-                 'can_recieve_sms' => $this->data['sms_opt_out'],
-                 'order' => DB::raw("(SELECT COALESCE(MAX(\"order\"), 0) + 1 FROM student_phone_numbers WHERE sisid = '$record->id')")
-             ]);
- 
-             $record->primaryPhone()->associate($primaryMobile);
- 
-         }
- 
-         if(!blank($this->data['address']) || !blank($this->data['address_2'])){
-             $primaryAddress = $record->addresses()->create([
-                 'line_1' => $this->data['address'],
-                 'line_2' => $this->data['address2'],
-                 'line_3' => $this->data['address3'],
-                 'city' => $this->data['city'],
-                 'state' => $this->data['state'],
-                 'postal' => $this->data['postal'],
-                 'order' => DB::raw("(SELECT COALESCE(MAX(\"order\"), 0) + 1 FROM student_addresses WHERE sisid = '$record->id')")
-             ]);
-             
-             $record->primaryAddress()->associate($primaryAddress);
-         }
- 
-         $record->save();
-       }
+            $primaryEmail = $record->emailAddresses()->create([
+                'address' => $this->data['email'],
+                'order' => DB::raw("(SELECT COALESCE(MAX(\"order\"), 0) + 1 FROM student_email_addresses WHERE sisid = '{$record->id}')"),
+            ]);
+
+            $record->primaryEmail()->associate($primaryEmail);
+
+            if (! blank($this->data['mobile'])) {
+                $primaryMobile = $record->phoneNumbers()->create([
+                    'number' => $this->data['mobile'],
+                    'type' => 'Mobile',
+                    'can_recieve_sms' => $this->data['sms_opt_out'],
+                    'order' => DB::raw("(SELECT COALESCE(MAX(\"order\"), 0) + 1 FROM student_phone_numbers WHERE sisid = '{$record->id}')"),
+                ]);
+
+                $record->primaryPhone()->associate($primaryMobile);
+            }
+
+            if (! blank($this->data['address']) || ! blank($this->data['address_2'])) {
+                $primaryAddress = $record->addresses()->create([
+                    'line_1' => $this->data['address'],
+                    'line_2' => $this->data['address2'],
+                    'line_3' => $this->data['address3'],
+                    'city' => $this->data['city'],
+                    'state' => $this->data['state'],
+                    'postal' => $this->data['postal'],
+                    'order' => DB::raw("(SELECT COALESCE(MAX(\"order\"), 0) + 1 FROM student_addresses WHERE sisid = '{$record->id}')"),
+                ]);
+
+                $record->primaryAddress()->associate($primaryAddress);
+            }
+
+            $record->save();
+        }
     }
 }

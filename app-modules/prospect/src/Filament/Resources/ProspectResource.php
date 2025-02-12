@@ -76,22 +76,22 @@ class ProspectResource extends Resource
         static::scoreGlobalSearchResults($query, $search, [
             'full_name' => 100,
             ...(
-              ProspectStudentRefactor::active()
+                ProspectStudentRefactor::active()
               ? ['prospect_email_addresses.address' => 75]
-              : ['email' => 75,'email_2' => 75]
-            )
+              : ['email' => 75, 'email_2' => 75]
+            ),
         ]);
     }
 
     public static function getGloballySearchableAttributes(): array
     {
         return [
-          'full_name', 'preferred',
-          ...(
-            ProspectStudentRefactor::active()
-              ? ['emailAddresses.address', 'phoneNumbers.number']
-              : ['email', 'email_2', 'mobile', 'phone']
-          ),
+            'full_name', 'preferred',
+            ...(
+                ProspectStudentRefactor::active()
+                ? ['emailAddresses.address', 'phoneNumbers.number']
+                : ['email', 'email_2', 'mobile', 'phone']
+            ),
         ];
     }
 
@@ -100,7 +100,7 @@ class ProspectResource extends Resource
         return array_filter([
             'Student ID' => $record->sisid,
             'Other ID' => $record->otherid,
-            'Email Address' => ProspectStudentRefactor::active() ? $record?->primaryEmail->address : collect([$record->email, $record->email_id])->filter()->implode(', ') ,
+            'Email Address' => ProspectStudentRefactor::active() ? $record?->primaryEmail->address : collect([$record->email, $record->email_id])->filter()->implode(', '),
             'Phone' => ProspectStudentRefactor::active() ? $record?->primaryPhone->number : collect([$record->mobile, $record->phone])->filter()->implode(', '),
             'Preferred Name' => $record->preferred,
         ], fn (mixed $value): bool => filled($value));

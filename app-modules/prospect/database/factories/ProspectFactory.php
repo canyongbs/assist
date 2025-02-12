@@ -91,9 +91,9 @@ class ProspectFactory extends Factory
                 $phone = ProspectPhoneNumber::factory()->create(['prospect_id' => $prospect->getKey()]);
                 $address = ProspectAddress::factory()->create(['prospect_id' => $prospect->getKey()]);
                 $prospect->update([
-                  'primary_email_id' => $email->getKey(),
-                  'primary_phone_id' => $phone->getKey(),
-                  'primary_address_id' => $address->getKey()
+                    'primary_email_id' => $email->getKey(),
+                    'primary_phone_id' => $phone->getKey(),
+                    'primary_address_id' => $address->getKey(),
                 ]);
             }
         });

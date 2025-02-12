@@ -20,19 +20,18 @@ return new class () extends Migration {
                             'prospect_id' => $prospect->id,
                             'address' => $prospect->email,
                             'type' => 'Personal',
-                            'order' => 1
+                            'order' => 1,
                         ]);
 
-
-                    if(!blank($prospect->email_2)) {
+                    if (! blank($prospect->email_2)) {
                         DB::table('prospect_email_addresses')
-                        ->insert([
-                            'id' => (string) Str::orderedUuid(),
-                            'prospect_id' => $prospect->id,
-                            'address' => $prospect->email_2,
-                            'type' => 'Other',
-                            'order' => 2
-                        ]);
+                            ->insert([
+                                'id' => (string) Str::orderedUuid(),
+                                'prospect_id' => $prospect->id,
+                                'address' => $prospect->email_2,
+                                'type' => 'Other',
+                                'order' => 2,
+                            ]);
                     }
 
                     if (! blank($prospect->mobile)) {
@@ -43,7 +42,7 @@ return new class () extends Migration {
                                 'number' => $prospect->mobile,
                                 'can_recieve_sms' => true,
                                 'type' => 'Mobile',
-                                'order' => 1
+                                'order' => 1,
                             ]);
                     }
 
@@ -55,7 +54,7 @@ return new class () extends Migration {
                                 'number' => $prospect->phone,
                                 'can_recieve_sms' => false,
                                 'type' => 'Phone',
-                                'order' => 2
+                                'order' => 2,
                             ]);
                     }
 
@@ -70,7 +69,7 @@ return new class () extends Migration {
                                 'city' => $prospect->city,
                                 'state' => $prospect->state,
                                 'postal' => $prospect->postal,
-                                'order' => 1
+                                'order' => 1,
                             ]);
                     }
 

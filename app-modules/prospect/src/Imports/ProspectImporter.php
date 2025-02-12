@@ -37,7 +37,6 @@
 namespace AdvisingApp\Prospect\Imports;
 
 use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Prospect\Models\ProspectEmailAddress;
 use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
 use App\Features\ProspectStudentRefactor;
@@ -48,7 +47,6 @@ use Filament\Actions\Imports\Models\Import;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class ProspectImporter extends Importer
@@ -136,9 +134,9 @@ class ProspectImporter extends Importer
     {
         $email = $this->data['email'];
 
-        if(ProspectStudentRefactor::active()){
+        if (ProspectStudentRefactor::active()) {
             $emails = [$email];
-        }else{
+        } else {
             $email2 = $this->data['email_2'] ?? null;
             $emails = [
                 $email,
@@ -147,25 +145,25 @@ class ProspectImporter extends Importer
         }
 
         $prospect = Prospect::query()
-            ->when(!ProspectStudentRefactor::active(),function(Builder $query) use($emails) {
+            ->when(! ProspectStudentRefactor::active(), function (Builder $query) use ($emails) {
                 $query->whereIn('email', $emails)
-                ->orWhereIn('email_2', $emails);
+                    ->orWhereIn('email_2', $emails);
             })
-            ->when(ProspectStudentRefactor::active(),function(Builder $query) use($emails) {
-                $query->whereHas('primaryEmail',function(Builder $query) use($emails) {
+            ->when(ProspectStudentRefactor::active(), function (Builder $query) use ($emails) {
+                $query->whereHas('primaryEmail', function (Builder $query) use ($emails) {
                     $query->whereIn('address', $emails);
                 });
             })
             ->first();
 
-        if(!ProspectStudentRefactor::active()){
+        if (! ProspectStudentRefactor::active()) {
             return $prospect ?? new Prospect([
                 'email' => $email,
                 'email_2' => $email2,
             ]);
-        }else{
-            return $prospect ?? new Prospect();
         }
+
+        return $prospect ?? new Prospect();
     }
 
     public function beforeCreate(): void
@@ -190,41 +188,39 @@ class ProspectImporter extends Importer
         return $body;
     }
 
-    public function afterCreate():void
+    public function afterCreate(): void
     {
-       if(ProspectStudentRefactor::active()){
-         /** @var Prospect $record */
-         $record = $this->record;
+        if (ProspectStudentRefactor::active()) {
+            /** @var Prospect $record */
+            $record = $this->record;
 
-         $primaryEmail = $record->emailAddresses()->create([
-             'address' => $this->data['email'],
-             'order' => DB::raw("(SELECT COALESCE(MAX(\"order\"), 0) + 1 FROM prospect_email_addresses WHERE prospect_id = '$record->id')")
-         ]);
- 
-         $record->primaryEmail()->associate($primaryEmail);
- 
-         if(!blank($this->data['mobile'])){
- 
-             $primaryMobile = $record->phoneNumbers()->create([
-                 'number' => $this->data['mobile'],
-                 'order' => DB::raw("(SELECT COALESCE(MAX(\"order\"), 0) + 1 FROM prospect_phone_numbers WHERE prospect_id = '$record->id')")
-             ]);
- 
-             $record->primaryPhone()->associate($primaryMobile);
- 
-         }
- 
-         if(!blank($this->data['address']) || !blank($this->data['address_2'])){
-             $primaryAddress = $record->addresses()->create([
-                 'line_1' => $this->data['address'],
-                 'line_2' => $this->data['address_2'],
-                 'order' => DB::raw("(SELECT COALESCE(MAX(\"order\"), 0) + 1 FROM prospect_addresses WHERE prospect_id = '$record->id')")
-             ]);
-             
-             $record->primaryAddress()->associate($primaryAddress);
-         }
- 
-         $record->save();
-       }
+            $primaryEmail = $record->emailAddresses()->create([
+                'address' => $this->data['email'],
+                'order' => DB::raw("(SELECT COALESCE(MAX(\"order\"), 0) + 1 FROM prospect_email_addresses WHERE prospect_id = '{$record->id}')"),
+            ]);
+
+            $record->primaryEmail()->associate($primaryEmail);
+
+            if (! blank($this->data['mobile'])) {
+                $primaryMobile = $record->phoneNumbers()->create([
+                    'number' => $this->data['mobile'],
+                    'order' => DB::raw("(SELECT COALESCE(MAX(\"order\"), 0) + 1 FROM prospect_phone_numbers WHERE prospect_id = '{$record->id}')"),
+                ]);
+
+                $record->primaryPhone()->associate($primaryMobile);
+            }
+
+            if (! blank($this->data['address']) || ! blank($this->data['address_2'])) {
+                $primaryAddress = $record->addresses()->create([
+                    'line_1' => $this->data['address'],
+                    'line_2' => $this->data['address_2'],
+                    'order' => DB::raw("(SELECT COALESCE(MAX(\"order\"), 0) + 1 FROM prospect_addresses WHERE prospect_id = '{$record->id}')"),
+                ]);
+
+                $record->primaryAddress()->associate($primaryAddress);
+            }
+
+            $record->save();
+        }
     }
 }

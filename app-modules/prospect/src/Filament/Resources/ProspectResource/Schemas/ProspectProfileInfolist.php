@@ -59,7 +59,7 @@ class ProspectProfileInfolist
                             TextEntry::make('preferred')
                                 ->label('Preferred Name'),
                             TextEntry::make('phone')
-                                ->visible(!ProspectStudentRefactor::active())
+                                ->visible(! ProspectStudentRefactor::active())
                                 ->placeholder('-'),
                             TextEntry::make('phoneNumbers.number')
                                 ->label('Phone')
@@ -70,7 +70,7 @@ class ProspectProfileInfolist
                                 ->placeholder('-'),
                             TextEntry::make('email_2')
                                 ->label('Alternate Email')
-                                ->visible(!ProspectStudentRefactor::active())
+                                ->visible(! ProspectStudentRefactor::active())
                                 ->placeholder('-'),
                             TextEntry::make('emailAddresses.address')
                                 ->label('Alternate Email')
