@@ -42,7 +42,6 @@ use AdvisingApp\Prospect\Models\ProspectEmailAddress;
 use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
 use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
-use App\Features\ProspectStudentRefactor;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -86,16 +85,14 @@ class ProspectFactory extends Factory
     public function configure(): static
     {
         return $this->afterCreating(function (Prospect $prospect) {
-            if (ProspectStudentRefactor::active()) {
-                $email = ProspectEmailAddress::factory()->create(['prospect_id' => $prospect->getKey()]);
-                $phone = ProspectPhoneNumber::factory()->create(['prospect_id' => $prospect->getKey()]);
-                $address = ProspectAddress::factory()->create(['prospect_id' => $prospect->getKey()]);
-                $prospect->update([
-                    'primary_email_id' => $email->getKey(),
-                    'primary_phone_id' => $phone->getKey(),
-                    'primary_address_id' => $address->getKey(),
-                ]);
-            }
+            $email = ProspectEmailAddress::factory()->create(['prospect_id' => $prospect->getKey()]);
+            $phone = ProspectPhoneNumber::factory()->create(['prospect_id' => $prospect->getKey()]);
+            $address = ProspectAddress::factory()->create(['prospect_id' => $prospect->getKey()]);
+            $prospect->update([
+                'primary_email_id' => $email->getKey(),
+                'primary_phone_id' => $phone->getKey(),
+                'primary_address_id' => $address->getKey(),
+            ]);
         });
     }
 }

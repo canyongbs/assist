@@ -38,6 +38,7 @@ namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Tables
 
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Features\ProspectStudentRefactor;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Enums\FiltersLayout;
@@ -63,9 +64,11 @@ class StudentsTable
                 TextColumn::make(Student::displayNameKey())
                     ->label('Name')
                     ->sortable(),
-                TextColumn::make('email'),
-                TextColumn::make('mobile'),
-                TextColumn::make('phone'),
+                TextColumn::make('email')->visible(! ProspectStudentRefactor::active()),
+                TextColumn::make('mobile')->visible(! ProspectStudentRefactor::active()),
+                TextColumn::make('phone')->visible(! ProspectStudentRefactor::active()),
+                TextColumn::make('primaryEmail.address')->label('Email')->visible(ProspectStudentRefactor::active()),
+                TextColumn::make('primaryPhone.number')->label('Phone')->visible(ProspectStudentRefactor::active()),
                 TextColumn::make('sisid'),
                 TextColumn::make('otherid'),
             ])
@@ -90,13 +93,32 @@ class StudentsTable
                         TextConstraint::make('otherid')
                             ->label('Other ID')
                             ->icon('heroicon-m-finger-print'),
-                        TextConstraint::make('email')
-                            ->label('Email Address')
-                            ->icon('heroicon-m-envelope'),
-                        TextConstraint::make('mobile')
-                            ->icon('heroicon-m-phone'),
-                        TextConstraint::make('address')
-                            ->icon('heroicon-m-map-pin'),
+                        ...(ProspectStudentRefactor::active()
+                            ?
+                            [
+                                TextConstraint::make('primaru_email_id')
+                                    ->label('Email Address')
+                                    ->relationship('primaryEmail', 'address')
+                                    ->icon('heroicon-m-envelope'),
+                                TextConstraint::make('primary_phone_id')
+                                    ->label('Mobile')
+                                    ->relationship('primaryPhone', 'number')
+                                    ->icon('heroicon-m-phone'),
+                                TextConstraint::make('primary_address_id')
+                                    ->label('Address')
+                                    ->relationship('primaryAddress', 'line_1')
+                                    ->icon('heroicon-m-map-pin'),
+                            ]
+                            :
+                            [
+                                TextConstraint::make('email')
+                                    ->label('Email Address')
+                                    ->icon('heroicon-m-envelope'),
+                                TextConstraint::make('mobile')
+                                    ->icon('heroicon-m-phone'),
+                                TextConstraint::make('address')
+                                    ->icon('heroicon-m-map-pin'),
+                            ]),
                         RelationshipConstraint::make('tags')
                             ->label('Tags')
                             ->icon('heroicon-m-rectangle-group')

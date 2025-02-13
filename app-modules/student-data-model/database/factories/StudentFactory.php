@@ -100,16 +100,14 @@ class StudentFactory extends Factory
     public function configure(): static
     {
         return $this->afterCreating(function (Student $student) {
-            if (ProspectStudentRefactor::active()) {
-                $email = StudentEmailAddress::factory()->create(['sisid' => $student->getKey()]);
-                $phone = StudentPhoneNumber::factory()->create(['sisid' => $student->getKey()]);
-                $address = StudentAddress::factory()->create(['sisid' => $student->getKey()]);
-                $student->update([
-                    'primary_email_id' => $email->getKey(),
-                    'primary_phone_id' => $phone->getKey(),
-                    'primary_address_id' => $address->getKey(),
-                ]);
-            }
+            $email = StudentEmailAddress::factory()->create(['sisid' => $student->getKey()]);
+            $phone = StudentPhoneNumber::factory()->create(['sisid' => $student->getKey()]);
+            $address = StudentAddress::factory()->create(['sisid' => $student->getKey()]);
+            $student->update([
+                'primary_email_id' => $email->getKey(),
+                'primary_phone_id' => $phone->getKey(),
+                'primary_address_id' => $address->getKey(),
+            ]);
         });
     }
 }

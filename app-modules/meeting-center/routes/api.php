@@ -36,6 +36,7 @@
 
 use AdvisingApp\MeetingCenter\Http\Controllers\EventRegistrationWidgetController;
 use AdvisingApp\MeetingCenter\Http\Middleware\EnsureEventRegistrationFormIsEmbeddableAndAuthorized;
+use Illuminate\Support\Facades\Route;
 
 Route::prefix('api')
     ->middleware([
