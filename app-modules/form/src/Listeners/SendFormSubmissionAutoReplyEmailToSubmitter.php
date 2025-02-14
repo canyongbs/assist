@@ -61,8 +61,8 @@ class SendFormSubmissionAutoReplyEmailToSubmitter implements ShouldQueue
             return;
         }
 
-        if($author->primaryEmail){
-          $author->notify(new FormSubmissionAutoReplyNotification(submission: $event->submission));
+        if ($author->primaryEmail) {
+            $author->notify(new FormSubmissionAutoReplyNotification(submission: $event->submission));
         }
     }
 }
