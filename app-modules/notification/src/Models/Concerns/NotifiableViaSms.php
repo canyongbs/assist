@@ -43,9 +43,9 @@ trait NotifiableViaSms
     public function routeNotificationForSms(): string
     {
         if (ProspectStudentRefactor::active()) {
-            return $this->primaryPhone->number;
+            return $this->primaryPhone?->number;
         }
 
-        return 'mobile';
+        return $this->mobile;
     }
 }

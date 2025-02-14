@@ -44,16 +44,16 @@ use App\Models\User;
 
 class CaseUpdateObserver
 {
-    public function created(CaseUpdate $caseUpdate): void
-    {
-        $user = auth()->user();
+    // public function created(CaseUpdate $caseUpdate): void
+    // {
+    //     $user = auth()->user();
 
-        if ($user instanceof User) {
-            TriggeredAutoSubscription::dispatch($user, $caseUpdate);
-        }
+    //     if ($user instanceof User) {
+    //         TriggeredAutoSubscription::dispatch($user, $caseUpdate);
+    //     }
 
-        TimelineableRecordCreated::dispatch($caseUpdate->case, $caseUpdate);
-    }
+    //     TimelineableRecordCreated::dispatch($caseUpdate->case, $caseUpdate);
+    // }
 
     public function deleted(CaseUpdate $caseUpdate): void
     {

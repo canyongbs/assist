@@ -388,15 +388,15 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
     /**
      * Route notifications for the mail channel.
      *
-     * @return  array<string, string>|string
+     * @return array<string, string>|string|null
      */
-    public function routeNotificationForMail(Notification $notification): array|string
+    public function routeNotificationForMail(Notification $notification): array|string|null
     {
         if (ProspectStudentRefactor::active()) {
-            return $this->primaryEmail->address;
+            return $this->primaryEmail?->address;
         }
 
-        return 'email';
+        return $this->email;
     }
 
     protected static function booted(): void

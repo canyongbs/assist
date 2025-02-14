@@ -385,17 +385,17 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
     }
 
     /**
-     * Route notifications for the mail channel.
-     *
-     * @return  array<string, string>|string
-     */
-    public function routeNotificationForMail(Notification $notification): array|string
+      * Route notifications for the mail channel.
+      *
+      * @return array<string, string>|string|null
+      */
+    public function routeNotificationForMail(Notification $notification): array|string|null
     {
         if (ProspectStudentRefactor::active()) {
-            return $this->primaryEmail->address;
+            return $this->primaryEmail?->address;
         }
 
-        return 'email';
+        return $this->email;
     }
 
     protected static function booted(): void

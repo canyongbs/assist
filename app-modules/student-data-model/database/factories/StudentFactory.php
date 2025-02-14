@@ -40,7 +40,6 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\StudentAddress;
 use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
 use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
-use App\Features\ProspectStudentRefactor;
 use Carbon\Carbon;
 use Faker\Provider\en_US\Address;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -63,18 +62,8 @@ class StudentFactory extends Factory
             'last' => $this->faker->lastName(),
             'full_name' => fn (array $attributes) => "{$attributes['first']} {$attributes['last']}",
             'preferred' => $this->faker->randomElement([$this->faker->firstName(), null]),
-            'email' => $this->faker->email(),
-            'email_2' => $this->faker->email(),
-            'mobile' => $this->faker->numerify('+1 ### ### ####'),
             'sms_opt_out' => $this->faker->boolean(),
             'email_bounce' => $this->faker->boolean(),
-            'phone' => $this->faker->numerify('+1 ### ### ####'),
-            'address' => $this->faker->buildingNumber() . ' ' . $this->faker->streetName(),
-            'address2' => $this->faker->randomElement([null, Address::secondaryAddress()]),
-            'address3' => null,
-            'city' => $this->faker->city(),
-            'state' => Address::stateAbbr(),
-            'postal' => $this->faker->postcode(),
             'birthdate' => $this->faker->date(),
             'hsgrad' => $this->faker->year(),
             'dual' => $this->faker->boolean(),
@@ -100,14 +89,19 @@ class StudentFactory extends Factory
     public function configure(): static
     {
         return $this->afterCreating(function (Student $student) {
-            $email = StudentEmailAddress::factory()->create(['sisid' => $student->getKey()]);
-            $phone = StudentPhoneNumber::factory()->create(['sisid' => $student->getKey()]);
-            $address = StudentAddress::factory()->create(['sisid' => $student->getKey()]);
-            $student->update([
-                'primary_email_id' => $email->getKey(),
-                'primary_phone_id' => $phone->getKey(),
-                'primary_address_id' => $address->getKey(),
-            ]);
+            $student->primaryEmail()->associate(StudentEmailAddress::factory()->create(['sisid' => $student->getKey(), 'address' => fake()->email()]));
+            $student->primaryPhone()->associate(StudentPhoneNumber::factory()->create(['sisid' => $student->getKey(), 'number' => fake()->numerify('+1 ### ### ####')]));
+            $student->primaryAddress()->associate(StudentAddress::factory()->create([
+                'sisid' => $student->getKey(),
+                'line_1' => fake()->buildingNumber() . ' ' . fake()->streetName(),
+                'line_2' => fake()->randomElement([null, Address::secondaryAddress()]),
+                'line_3' => null,
+                'city' => fake()->city(),
+                'state' => Address::stateAbbr(),
+                'postal' => fake()->postcode(),
+            ]));
+
+            $student->save();
         });
     }
 }

@@ -42,8 +42,10 @@ class DeliverFormSubmissionRequestByEmail extends DeliverFormSubmissionRequest
 {
     public function handle(): void
     {
-        $this->submission
-            ->author
-            ->notify(new FormSubmissionRequestNotification($this->submission));
+        if ($this->submission->author->primaryEmail) {
+            $this->submission
+                ->author
+                ->notify(new FormSubmissionRequestNotification($this->submission));
+        }
     }
 }

@@ -64,16 +64,6 @@ class ProspectFactory extends Factory
             'full_name' => "{$firstName} {$lastName}",
             'preferred' => fake()->firstName(),
             'description' => fake()->paragraph(),
-            'email' => fake()->unique()->email(),
-            'email_2' => fake()->email(),
-            'mobile' => fake()->phoneNumber(),
-            'phone' => fake()->phoneNumber(),
-            'address' => fake()->streetAddress(),
-            'address_2' => fake()->secondaryAddress(),
-            'address_3' => $address3 ? str($address3)->headline()->toString() : null,
-            'city' => fake()->city(),
-            'state' => fake()->stateAbbr(),
-            'postal' => str(fake()->postcode())->before('-')->toString(),
             'sms_opt_out' => fake()->boolean(),
             'email_bounce' => fake()->boolean(),
             'birthdate' => fake()->date(),
@@ -85,14 +75,19 @@ class ProspectFactory extends Factory
     public function configure(): static
     {
         return $this->afterCreating(function (Prospect $prospect) {
-            $email = ProspectEmailAddress::factory()->create(['prospect_id' => $prospect->getKey()]);
-            $phone = ProspectPhoneNumber::factory()->create(['prospect_id' => $prospect->getKey()]);
-            $address = ProspectAddress::factory()->create(['prospect_id' => $prospect->getKey()]);
-            $prospect->update([
-                'primary_email_id' => $email->getKey(),
-                'primary_phone_id' => $phone->getKey(),
-                'primary_address_id' => $address->getKey(),
-            ]);
+            $prospect->primaryEmail()->associate(ProspectEmailAddress::factory()->create(['prospect_id' => $prospect->getKey(), 'address' => fake()->unique()->email()]));
+            $prospect->primaryPhone()->associate(ProspectPhoneNumber::factory()->create(['prospect_id' => $prospect->getKey(), 'number' => fake()->phoneNumber()]));
+            $prospect->primaryAddress()->associate(ProspectAddress::factory()->create([
+                'prospect_id' => $prospect->getKey(),
+                'line_1' => fake()->streetAddress(),
+                'line_2' => fake()->secondaryAddress(),
+                'line_3' => fake()->optional()->words(asText: true) ?? null,
+                'city' => fake()->city(),
+                'state' => fake()->stateAbbr(),
+                'postal' => str(fake()->postcode())->before('-')->toString(),
+            ]));
+
+            $prospect->save();
         });
     }
 }

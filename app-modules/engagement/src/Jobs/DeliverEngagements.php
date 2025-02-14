@@ -72,7 +72,9 @@ class DeliverEngagements implements ShouldQueue
                         return;
                     }
 
-                    $engagement->recipient->notify(new EngagementNotification($engagement));
+                    if ($engagement->recipient->primaryEmail) {
+                        $engagement->recipient->notify(new EngagementNotification($engagement));
+                    }
                 }),
                 250,
             );
