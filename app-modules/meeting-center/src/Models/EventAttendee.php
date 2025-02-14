@@ -39,10 +39,13 @@ namespace AdvisingApp\MeetingCenter\Models;
 use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Prospect\Models\ProspectEmailAddress;
 use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Notifications\Notifiable;
 
 /**
@@ -72,21 +75,27 @@ class EventAttendee extends BaseModel implements CanBeNotified
         return $this->hasMany(EventRegistrationFormSubmission::class, 'event_attendee_id');
     }
 
-    public function prospects(): HasMany
+    public function prospects(): HasManyThrough
     {
-        return $this->hasMany(
-            related: Prospect::class,
-            foreignKey: 'email',
-            localKey: 'email',
+        return $this->hasManyThrough(
+            Prospect::class,
+            ProspectEmailAddress::class,
+            'address', 
+            'primary_email_id', 
+            'email', 
+            'id'
         );
     }
 
-    public function students(): HasMany
+    public function students(): HasManyThrough
     {
-        return $this->hasMany(
-            related: Student::class,
-            foreignKey: 'email',
-            localKey: 'email',
+        return $this->hasManyThrough(
+            Student::class,
+            StudentEmailAddress::class,
+            'address', 
+            'primary_email_id', 
+            'email',
+            'id'
         );
     }
 

@@ -79,25 +79,25 @@ test('A successful action on the CreateCaseUpdate page', function () {
         ->toEqual($request->get('case_model_id'));
 });
 
-// test('CreateCaseUpdate requires valid data', function ($data, $errors) {
-//     asSuperAdmin();
+test('CreateCaseUpdate requires valid data', function ($data, $errors) {
+    asSuperAdmin();
 
-//     livewire(CreateCaseUpdate::class)
-//         ->fillForm(CreateCaseUpdateRequestFactory::new($data)->create())
-//         ->call('create')
-//         ->assertHasFormErrors($errors);
+    livewire(CreateCaseUpdate::class)
+        ->fillForm(CreateCaseUpdateRequestFactory::new($data)->create())
+        ->call('create')
+        ->assertHasFormErrors($errors);
 
-//     assertEmpty(CaseUpdate::all());
-// })->with(
-//     [
-//         'case missing' => [CreateCaseUpdateRequestFactory::new()->without('case_model_id'), ['case_model_id' => 'required']],
-//         'case not existing case id' => [CreateCaseUpdateRequestFactory::new()->state(['case_model_id' => fake()->uuid()]), ['case_model_id' => 'exists']],
-//         'update missing' => [CreateCaseUpdateRequestFactory::new()->without('update'), ['update' => 'required']],
-//         'update is not a string' => [CreateCaseUpdateRequestFactory::new()->state(['update' => 99]), ['update' => 'string']],
-//         'direction missing' => [CreateCaseUpdateRequestFactory::new()->state(['direction' => null]), ['direction' => 'required']],
-//         'internal not a boolean' => [CreateCaseUpdateRequestFactory::new()->state(['internal' => 'invalid']), ['internal' => 'boolean']],
-//     ]
-// );
+    assertEmpty(CaseUpdate::all());
+})->with(
+    [
+        'case missing' => [CreateCaseUpdateRequestFactory::new()->without('case_model_id'), ['case_model_id' => 'required']],
+        'case not existing case id' => [CreateCaseUpdateRequestFactory::new()->state(['case_model_id' => fake()->uuid()]), ['case_model_id' => 'exists']],
+        'update missing' => [CreateCaseUpdateRequestFactory::new()->without('update'), ['update' => 'required']],
+        'update is not a string' => [CreateCaseUpdateRequestFactory::new()->state(['update' => 99]), ['update' => 'string']],
+        'direction missing' => [CreateCaseUpdateRequestFactory::new()->state(['direction' => null]), ['direction' => 'required']],
+        'internal not a boolean' => [CreateCaseUpdateRequestFactory::new()->state(['internal' => 'invalid']), ['internal' => 'boolean']],
+    ]
+);
 
 // Permission Tests
 

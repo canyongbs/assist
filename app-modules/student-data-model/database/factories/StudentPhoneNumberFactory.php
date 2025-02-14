@@ -55,7 +55,6 @@ class StudentPhoneNumberFactory extends Factory
     public function definition(): array
     {
         return [
-            'sisid' => Student::factory(),
             'number' => fake()->phoneNumber(),
             'ext' => null,
             'type' => fake()->randomElement(['Home', 'Mobile', 'Work']),

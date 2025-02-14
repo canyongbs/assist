@@ -76,7 +76,7 @@ class ProspectFactory extends Factory
     {
         return $this->afterCreating(function (Prospect $prospect) {
             $prospect->primaryEmail()->associate(ProspectEmailAddress::factory()->create(['prospect_id' => $prospect->getKey(), 'address' => fake()->unique()->email()]));
-            $prospect->primaryPhone()->associate(ProspectPhoneNumber::factory()->create(['prospect_id' => $prospect->getKey(), 'number' => fake()->phoneNumber()]));
+            $prospect->primaryPhone()->associate(ProspectPhoneNumber::factory()->create(['prospect_id' => $prospect->getKey(), 'number' => fake()->numerify('+1 ### ### ####')]));
             $prospect->primaryAddress()->associate(ProspectAddress::factory()->create([
                 'prospect_id' => $prospect->getKey(),
                 'line_1' => fake()->streetAddress(),

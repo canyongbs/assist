@@ -55,7 +55,6 @@ class StudentAddressFactory extends Factory
     public function definition(): array
     {
         return [
-            'sisid' => Student::factory(),
             'line_1' => fake()->streetAddress(),
             'line_2' => fake()->optional()->streetAddress(),
             'line_3' => fake()->optional()->citySuffix(),

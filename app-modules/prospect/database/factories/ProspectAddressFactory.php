@@ -55,7 +55,6 @@ class ProspectAddressFactory extends Factory
     public function definition(): array
     {
         return [
-            'prospect_id' => Prospect::factory(),
             'line_1' => fake()->streetAddress(),
             'line_2' => fake()->optional()->streetAddress(),
             'line_3' => fake()->optional()->citySuffix(),

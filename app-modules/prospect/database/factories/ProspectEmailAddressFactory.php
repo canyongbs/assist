@@ -55,7 +55,6 @@ class ProspectEmailAddressFactory extends Factory
     public function definition(): array
     {
         return [
-            'prospect_id' => Prospect::factory(),
             'address' => fake()->email(),
             'type' => fake()->randomElement(['School', 'Personal', 'Work']),
             'order' => fake()->unique()->numberBetween(1, 1000),

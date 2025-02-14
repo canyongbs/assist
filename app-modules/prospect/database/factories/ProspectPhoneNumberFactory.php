@@ -55,7 +55,6 @@ class ProspectPhoneNumberFactory extends Factory
     public function definition(): array
     {
         return [
-            'prospect_id' => Prospect::factory(),
             'number' => fake()->phoneNumber(),
             'ext' => null,
             'type' => fake()->randomElement(['Home', 'Mobile', 'Work']),
