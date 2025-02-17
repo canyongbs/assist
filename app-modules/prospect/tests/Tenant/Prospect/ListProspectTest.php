@@ -166,7 +166,6 @@ it('can filter prospects by `subscribed` prospects', function () {
         ->assertCanSeeTableRecords($subscribedProspects)
         ->assertCanNotSeeTableRecords($notSubscribedProspects);
 });
-
 it('can filter prospect by alerts', function () {
     asSuperAdmin();
 
