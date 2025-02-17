@@ -12,7 +12,7 @@ return new class () extends Migration {
         DB::table('students')
             ->select('sisid', 'email', 'email_2', 'mobile', 'phone', 'address', 'address2', 'address3', 'city', 'state', 'postal')
             ->orderBy('sisid', 'asc')
-            ->chunk(100, function ($students) {
+            ->chunkById(100, function ($students) {
                 foreach ($students as $student) {
                     DB::table('student_email_addresses')
                         ->insert([
@@ -93,7 +93,7 @@ return new class () extends Migration {
                             'primary_address_id' => $primaryAddress->id ?? null,
                         ]);
                 }
-            });
+            }, 'sisid');
 
         DB::commit();
     }

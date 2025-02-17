@@ -12,87 +12,120 @@ return new class () extends Migration {
         DB::table('prospects')
             ->select('id', 'email', 'email_2', 'mobile', 'phone', 'address', 'address_2', 'address_3', 'city', 'state', 'postal')
             ->orderBy('id', 'asc')
-            ->chunk(100, function ($prospects) {
+            ->chunkById(100, function ($prospects) {
+                $emails = [];
+                $phones = [];
+                $addresses = [];
+
                 foreach ($prospects as $prospect) {
-                    DB::table('prospect_email_addresses')
-                        ->insert([
+                    // Collect Emails
+                    if (! blank($prospect->email)) {
+                        $emails[] = [
                             'id' => (string) Str::orderedUuid(),
                             'prospect_id' => $prospect->id,
                             'address' => $prospect->email,
                             'type' => 'Personal',
                             'order' => 1,
-                        ]);
-
-                    if (! blank($prospect->email_2)) {
-                        DB::table('prospect_email_addresses')
-                            ->insert([
-                                'id' => (string) Str::orderedUuid(),
-                                'prospect_id' => $prospect->id,
-                                'address' => $prospect->email_2,
-                                'type' => 'Other',
-                                'order' => 2,
-                            ]);
+                        ];
                     }
 
+                    if (! blank($prospect->email_2)) {
+                        $emails[] = [
+                            'id' => (string) Str::orderedUuid(),
+                            'prospect_id' => $prospect->id,
+                            'address' => $prospect->email_2,
+                            'type' => 'Other',
+                            'order' => 2,
+                        ];
+                    }
+
+                    // Collect Phones
                     if (! blank($prospect->mobile)) {
-                        DB::table('prospect_phone_numbers')
-                            ->insert([
-                                'id' => (string) Str::orderedUuid(),
-                                'prospect_id' => $prospect->id,
-                                'number' => $prospect->mobile,
-                                'can_recieve_sms' => true,
-                                'type' => 'Mobile',
-                                'order' => 1,
-                            ]);
+                        $phones[] = [
+                            'id' => (string) Str::orderedUuid(),
+                            'prospect_id' => $prospect->id,
+                            'number' => $prospect->mobile,
+                            'can_recieve_sms' => true,
+                            'type' => 'Mobile',
+                            'order' => 1,
+                        ];
                     }
 
                     if (! blank($prospect->phone)) {
-                        DB::table('prospect_phone_numbers')
-                            ->insert([
-                                'id' => (string) Str::orderedUuid(),
-                                'prospect_id' => $prospect->id,
-                                'number' => $prospect->phone,
-                                'can_recieve_sms' => false,
-                                'type' => 'Phone',
-                                'order' => 2,
-                            ]);
+                        $phones[] = [
+                            'id' => (string) Str::orderedUuid(),
+                            'prospect_id' => $prospect->id,
+                            'number' => $prospect->phone,
+                            'can_recieve_sms' => false,
+                            'type' => 'Phone',
+                            'order' => 2,
+                        ];
                     }
 
+                    // Collect Addresses
                     if (! blank($prospect->address)) {
-                        DB::table('prospect_addresses')
-                            ->insert([
-                                'id' => (string) Str::orderedUuid(),
-                                'prospect_id' => $prospect->id,
-                                'line_1' => $prospect->address,
-                                'line_2' => $prospect->address_2,
-                                'line_3' => $prospect->address_3,
-                                'city' => $prospect->city,
-                                'state' => $prospect->state,
-                                'postal' => $prospect->postal,
-                                'order' => 1,
-                            ]);
+                        $addresses[] = [
+                            'id' => (string) Str::orderedUuid(),
+                            'prospect_id' => $prospect->id,
+                            'line_1' => $prospect->address,
+                            'line_2' => $prospect->address_2,
+                            'line_3' => $prospect->address_3,
+                            'city' => $prospect->city,
+                            'state' => $prospect->state,
+                            'postal' => $prospect->postal,
+                            'order' => 1,
+                        ];
                     }
-
-                    $primaryEmail = DB::table('prospect_email_addresses')
-                        ->where('prospect_id', $prospect->id)
-                        ->first();
-
-                    $primaryPhone = DB::table('prospect_phone_numbers')
-                        ->where('prospect_id', $prospect->id)
-                        ->first();
-
-                    $primaryAddress = DB::table('prospect_addresses')
-                        ->where('prospect_id', $prospect->id)
-                        ->first();
-
-                    DB::table('prospects')
-                        ->where('id', $prospect->id)
-                        ->update([
-                            'primary_email_id' => $primaryEmail->id ?? null,
-                            'primary_phone_id' => $primaryPhone->id ?? null,
-                            'primary_address_id' => $primaryAddress->id ?? null,
-                        ]);
                 }
+
+                // Bulk Insert Data
+                if (! empty($emails)) {
+                    DB::table('prospect_email_addresses')->insert($emails);
+                }
+
+                if (! empty($phones)) {
+                    DB::table('prospect_phone_numbers')->insert($phones);
+                }
+
+                if (! empty($addresses)) {
+                    DB::table('prospect_addresses')->insert($addresses);
+                }
+
+                // Perform Bulk Update Using JOINs in Laravel Query Builder
+                DB::table('prospects as p')
+                    ->leftJoinSub(
+                        DB::table('prospect_email_addresses')
+                            ->select('prospect_id', DB::raw('MIN(id) as primary_email_id'))
+                            ->groupBy('prospect_id'),
+                        'e',
+                        'p.id',
+                        '=',
+                        'e.prospect_id'
+                    )
+                    ->leftJoinSub(
+                        DB::table('prospect_phone_numbers')
+                            ->select('prospect_id', DB::raw('MIN(id) as primary_phone_id'))
+                            ->groupBy('prospect_id'),
+                        'ph',
+                        'p.id',
+                        '=',
+                        'ph.prospect_id'
+                    )
+                    ->leftJoinSub(
+                        DB::table('prospect_addresses')
+                            ->select('prospect_id', DB::raw('MIN(id) as primary_address_id'))
+                            ->groupBy('prospect_id'),
+                        'a',
+                        'p.id',
+                        '=',
+                        'a.prospect_id'
+                    )
+                    ->whereIn('p.id', $prospects->pluck('id')->toArray())
+                    ->update([
+                        'p.primary_email_id' => DB::raw('e.primary_email_id'),
+                        'p.primary_phone_id' => DB::raw('ph.primary_phone_id'),
+                        'p.primary_address_id' => DB::raw('a.primary_address_id'),
+                    ]);
             });
 
         DB::commit();
