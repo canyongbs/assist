@@ -99,24 +99,22 @@ return new class () extends Migration {
 
     public function down(): void
     {
-        DB::beginTransaction();
-
-        DB::table('students')
-            ->update([
-                'primary_email_id' => null,
-                'primary_phone_id' => null,
-                'primary_address_id' => null,
-            ]);
-
-        DB::table('student_email_addresses')
-            ->delete();
-
-        DB::table('student_phone_numbers')
-            ->delete();
-
-        DB::table('student_addresses')
-            ->delete();
-
-        DB::commit();
+        DB::transaction(function(){
+            DB::table('students')
+                ->update([
+                    'primary_email_id' => null,
+                    'primary_phone_id' => null,
+                    'primary_address_id' => null,
+                ]);
+    
+            DB::table('student_email_addresses')
+                ->delete();
+    
+            DB::table('student_phone_numbers')
+                ->delete();
+    
+            DB::table('student_addresses')
+                ->delete();
+        });
     }
 };

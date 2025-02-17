@@ -17,7 +17,7 @@ return new class () extends Migration {
                 $addresses = [];
 
                 foreach ($prospects as $prospect) {
-                    // Collect Emails
+                    
                     if (! blank($prospect->email)) {
                         $emails[] = [
                             'id' => (string) Str::orderedUuid(),
@@ -38,7 +38,6 @@ return new class () extends Migration {
                         ];
                     }
 
-                    // Collect Phones
                     if (! blank($prospect->mobile)) {
                         $phones[] = [
                             'id' => (string) Str::orderedUuid(),
@@ -61,7 +60,6 @@ return new class () extends Migration {
                         ];
                     }
 
-                    // Collect Addresses
                     if (! blank($prospect->address)) {
                         $addresses[] = [
                             'id' => (string) Str::orderedUuid(),
@@ -102,24 +100,24 @@ return new class () extends Migration {
 
     public function down(): void
     {
-        DB::beginTransaction();
+        DB::transaction(function(){
 
-        DB::table('prospects')
+            DB::table('prospects')
             ->update([
                 'primary_email_id' => null,
                 'primary_phone_id' => null,
                 'primary_address_id' => null,
             ]);
 
-        DB::table('prospect_email_addresses')
-            ->delete();
+            DB::table('prospect_email_addresses')
+                ->delete();
 
-        DB::table('prospect_phone_numbers')
-            ->delete();
+            DB::table('prospect_phone_numbers')
+                ->delete();
 
-        DB::table('prospect_addresses')
-            ->delete();
+            DB::table('prospect_addresses')
+                ->delete();
 
-        DB::commit();
+        });
     }
 };
