@@ -80,7 +80,9 @@ class CreateBatchedEngagement implements ShouldQueue
             $engagement->save();
 
             if (! $engagement->scheduled_at) {
-                $engagement->recipient->notifyNow(new EngagementNotification($engagement));
+                if ($engagement->recipient->primaryEmail) {
+                    $engagement->recipient->notifyNow(new EngagementNotification($engagement));
+                }
             }
         });
     }
