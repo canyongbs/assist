@@ -41,6 +41,7 @@ use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Form\Notifications\FormSubmissionAutoReplyNotification;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Features\ProspectStudentRefactor;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
 class SendFormSubmissionAutoReplyEmailToSubmitter implements ShouldQueue
@@ -61,7 +62,11 @@ class SendFormSubmissionAutoReplyEmailToSubmitter implements ShouldQueue
             return;
         }
 
-        if ($author->primaryEmail) {
+        if (ProspectStudentRefactor::active()) {
+            if ($author->primaryEmail) {
+                $author->notify(new FormSubmissionAutoReplyNotification(submission: $event->submission));
+            }
+        } else {
             $author->notify(new FormSubmissionAutoReplyNotification(submission: $event->submission));
         }
     }

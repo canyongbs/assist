@@ -115,14 +115,6 @@ class StudentImporter extends Importer
                     'email',
                     'max:255',
                 ]),
-            // ImportColumn::make('email_2')
-            //     ->example('johnsmith@hotmail.com')
-            //     ->visible(false)
-            //     ->rules([
-            //         'nullable',
-            //         'email',
-            //         'max:255',
-            //     ]),
             ImportColumn::make('mobile')
                 ->example('+1 (555) 555-5555')
                 ->rules([
@@ -130,13 +122,6 @@ class StudentImporter extends Importer
                     'string',
                     'max:255',
                 ]),
-            // ImportColumn::make('phone')
-            //     ->example('+1 (555) 555-5555')
-            //     ->rules([
-            //         'nullable',
-            //         'string',
-            //         'max:255',
-            //     ]),
             ImportColumn::make('address')
                 ->example('123 Main St.')
                 ->rules([

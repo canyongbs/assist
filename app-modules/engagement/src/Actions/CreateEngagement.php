@@ -39,6 +39,7 @@ namespace AdvisingApp\Engagement\Actions;
 use AdvisingApp\Engagement\DataTransferObjects\EngagementCreationData;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Notifications\EngagementNotification;
+use App\Features\ProspectStudentRefactor;
 use Illuminate\Support\Facades\DB;
 
 class CreateEngagement
@@ -69,7 +70,11 @@ class CreateEngagement
             $engagement->save();
 
             if (! $engagement->scheduled_at) {
-                if ($engagement->recipient->primaryEmail) {
+                if (ProspectStudentRefactor::active()) {
+                    if ($engagement->recipient->primaryEmail) {
+                        $engagement->recipient->notify(new EngagementNotification($engagement));
+                    }
+                } else {
                     $engagement->recipient->notify(new EngagementNotification($engagement));
                 }
             }

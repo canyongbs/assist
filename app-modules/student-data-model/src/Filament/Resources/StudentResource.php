@@ -68,12 +68,18 @@ class StudentResource extends Resource
 
     public static function getGlobalSearchEloquentQuery(): Builder
     {
-        return parent::getGlobalSearchEloquentQuery()->with(['emailAddresses:id,address', 'phoneNumbers:id,number']);
+        if (ProspectStudentRefactor::active()) {
+            return parent::getGlobalSearchEloquentQuery()->with(['emailAddresses:id,address', 'phoneNumbers:id,number']);
+        }
+
+        return parent::getGlobalSearchEloquentQuery();
     }
 
     public static function modifyGlobalSearchQuery(Builder $query, string $search): void
     {
-        $query->leftJoinRelationship('primaryEmail');
+        if (ProspectStudentRefactor::active()) {
+            $query->leftJoinRelationship('primaryEmail');
+        }
 
         static::scoreGlobalSearchResults($query, $search, [
             'full_name' => 100,

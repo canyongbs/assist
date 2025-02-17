@@ -366,7 +366,11 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
 
     public function canRecieveSms(): bool
     {
-        return $this->primaryPhone && $this->primaryPhone->number && $this->primaryPhone->can_recieve_sms;
+        if (ProspectStudentRefactor::active()) {
+            return $this->primaryPhone && $this->primaryPhone->number && $this->primaryPhone->can_recieve_sms;
+        }
+
+        return filled($this->mobile);
     }
 
     public function tags(): MorphToMany

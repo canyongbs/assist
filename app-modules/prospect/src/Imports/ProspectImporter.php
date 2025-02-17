@@ -102,9 +102,6 @@ class ProspectImporter extends Importer
                 ->rules(['required', 'email'])
                 ->requiredMapping()
                 ->example('johnsmith@gmail.com'),
-            // ImportColumn::make('email_2')
-            //     ->rules(['email'])
-            //     ->example('johnsmith@hotmail.com'),
             ImportColumn::make('mobile')
                 ->example('+1 (555) 555-5555'),
             ImportColumn::make('sms_opt_out')
@@ -116,8 +113,6 @@ class ProspectImporter extends Importer
                 ->boolean()
                 ->rules(['boolean'])
                 ->example('yes'),
-            // ImportColumn::make('phone')
-            //     ->example('+1 (555) 555-5555'),
             ImportColumn::make('address')
                 ->example('123 Main St.'),
             ImportColumn::make('address_2')

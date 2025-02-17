@@ -37,12 +37,19 @@
 namespace AdvisingApp\Form\Actions;
 
 use AdvisingApp\Form\Notifications\FormSubmissionRequestNotification;
+use App\Features\ProspectStudentRefactor;
 
 class DeliverFormSubmissionRequestByEmail extends DeliverFormSubmissionRequest
 {
     public function handle(): void
     {
-        if ($this->submission->author->primaryEmail) {
+        if (ProspectStudentRefactor::active()) {
+            if ($this->submission->author->primaryEmail) {
+                $this->submission
+                    ->author
+                    ->notify(new FormSubmissionRequestNotification($this->submission));
+            }
+        } else {
             $this->submission
                 ->author
                 ->notify(new FormSubmissionRequestNotification($this->submission));

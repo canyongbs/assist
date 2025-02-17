@@ -53,6 +53,7 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
 use AdvisingApp\Timeline\Models\Timeline;
 use AdvisingApp\Timeline\Timelines\EngagementTimeline;
+use App\Features\ProspectStudentRefactor;
 use App\Models\BaseModel;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
@@ -220,7 +221,7 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
             'student first name' => $this->recipient->getAttribute($this->recipient->displayFirstNameKey()),
             'student last name' => $this->recipient->getAttribute($this->recipient->displayLastNameKey()),
             'student full name' => $this->recipient->getAttribute($this->recipient->displayNameKey()),
-            'student email' => $this->recipient?->primaryEmail?->address,
+            'student email' => ProspectStudentRefactor::active() ? $this->recipient?->primaryEmail?->address : $this->recipient->getAttribute($this->recipient->displayEmailKey()),
             'student preferred name' => $this->recipient->getAttribute($this->recipient->displayPreferredNameKey()),
         ];
     }

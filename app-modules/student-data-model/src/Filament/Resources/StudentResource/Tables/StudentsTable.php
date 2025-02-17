@@ -96,7 +96,7 @@ class StudentsTable
                         ...(ProspectStudentRefactor::active()
                             ?
                             [
-                                TextConstraint::make('primaru_email_id')
+                                TextConstraint::make('primary_email_id')
                                     ->label('Email Address')
                                     ->relationship('primaryEmail', 'address')
                                     ->icon('heroicon-m-envelope'),

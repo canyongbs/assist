@@ -36,12 +36,11 @@
 
 namespace AdvisingApp\StudentDataModel\Database\Factories;
 
-use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends Factory< StudentPhoneNumber>
+ * @extends Factory<StudentPhoneNumber>
  */
 class StudentPhoneNumberFactory extends Factory
 {

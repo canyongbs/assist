@@ -7,9 +7,8 @@ use Illuminate\Support\Str;
 return new class () extends Migration {
     public function up(): void
     {
-        DB::beginTransaction();
-
-        DB::table('students')
+        DB::transaction(function(){
+            DB::table('students')
             ->select('sisid', 'email', 'email_2', 'mobile', 'phone', 'address', 'address2', 'address3', 'city', 'state', 'postal')
             ->orderBy('sisid', 'asc')
             ->chunkById(100, function ($students) {
@@ -85,16 +84,17 @@ return new class () extends Migration {
                     DB::table('student_addresses')->insert($addresses);
                 }
 
-                DB::table('students as s')
-                    ->whereIn('s.sisid', $students->pluck('sisid')->toArray())
-                    ->update([
-                        'primary_email_id' => DB::raw('(SELECT id FROM student_email_addresses WHERE sisid = s.sisid AND "order" = 1 LIMIT 1)'),
-                        'primary_phone_id' => DB::raw('(SELECT id FROM student_phone_numbers WHERE sisid = s.sisid AND "order" = 1 LIMIT 1)'),
-                        'primary_address_id' => DB::raw('(SELECT id FROM student_addresses WHERE sisid = s.sisid AND "order" = 1 LIMIT 1)'),
-                    ]);
+                
             }, 'sisid');
 
-        DB::commit();
+            DB::table('students')
+                ->update([
+                    'primary_email_id' => DB::raw('(SELECT email.id FROM student_email_addresses email WHERE email.sisid = students.sisid AND email."order" = 1 LIMIT 1)'),
+                    'primary_phone_id' => DB::raw('(SELECT phone.id FROM student_phone_numbers phone WHERE phone.sisid = students.sisid AND phone."order" = 1 LIMIT 1)'),
+                    'primary_address_id' => DB::raw('(SELECT address.id FROM student_addresses address WHERE address.sisid = students.sisid AND address."order" = 1 LIMIT 1)'),
+                ]);
+        });
+        
     }
 
     public function down(): void

@@ -7,102 +7,97 @@ use Illuminate\Support\Str;
 return new class () extends Migration {
     public function up(): void
     {
-        DB::beginTransaction();
-
-        DB::table('prospects')
+        DB::transaction(function(){
+            DB::table('prospects')
             ->select('id', 'email', 'email_2', 'mobile', 'phone', 'address', 'address_2', 'address_3', 'city', 'state', 'postal')
             ->orderBy('id', 'asc')
             ->chunkById(100, function ($prospects) {
-                DB::transaction(function () use ($prospects) {
-                    $emails = [];
-                    $phones = [];
-                    $addresses = [];
+                $emails = [];
+                $phones = [];
+                $addresses = [];
 
-                    foreach ($prospects as $prospect) {
-                        // Collect Emails
-                        if (! blank($prospect->email)) {
-                            $emails[] = [
-                                'id' => (string) Str::orderedUuid(),
-                                'prospect_id' => $prospect->id,
-                                'address' => $prospect->email,
-                                'type' => 'Personal',
-                                'order' => 1,
-                            ];
-                        }
-
-                        if (! blank($prospect->email_2)) {
-                            $emails[] = [
-                                'id' => (string) Str::orderedUuid(),
-                                'prospect_id' => $prospect->id,
-                                'address' => $prospect->email_2,
-                                'type' => 'Other',
-                                'order' => 2,
-                            ];
-                        }
-
-                        // Collect Phones
-                        if (! blank($prospect->mobile)) {
-                            $phones[] = [
-                                'id' => (string) Str::orderedUuid(),
-                                'prospect_id' => $prospect->id,
-                                'number' => $prospect->mobile,
-                                'can_recieve_sms' => true,
-                                'type' => 'Mobile',
-                                'order' => 1,
-                            ];
-                        }
-
-                        if (! blank($prospect->phone)) {
-                            $phones[] = [
-                                'id' => (string) Str::orderedUuid(),
-                                'prospect_id' => $prospect->id,
-                                'number' => $prospect->phone,
-                                'can_recieve_sms' => false,
-                                'type' => 'Phone',
-                                'order' => 2,
-                            ];
-                        }
-
-                        // Collect Addresses
-                        if (! blank($prospect->address)) {
-                            $addresses[] = [
-                                'id' => (string) Str::orderedUuid(),
-                                'prospect_id' => $prospect->id,
-                                'line_1' => $prospect->address,
-                                'line_2' => $prospect->address_2,
-                                'line_3' => $prospect->address_3,
-                                'city' => $prospect->city,
-                                'state' => $prospect->state,
-                                'postal' => $prospect->postal,
-                                'order' => 1,
-                            ];
-                        }
+                foreach ($prospects as $prospect) {
+                    // Collect Emails
+                    if (! blank($prospect->email)) {
+                        $emails[] = [
+                            'id' => (string) Str::orderedUuid(),
+                            'prospect_id' => $prospect->id,
+                            'address' => $prospect->email,
+                            'type' => 'Personal',
+                            'order' => 1,
+                        ];
                     }
 
-                    // Bulk Insert Data
-                    if (! empty($emails)) {
-                        DB::table('prospect_email_addresses')->insert($emails);
+                    if (! blank($prospect->email_2)) {
+                        $emails[] = [
+                            'id' => (string) Str::orderedUuid(),
+                            'prospect_id' => $prospect->id,
+                            'address' => $prospect->email_2,
+                            'type' => 'Other',
+                            'order' => 2,
+                        ];
                     }
 
-                    if (! empty($phones)) {
-                        DB::table('prospect_phone_numbers')->insert($phones);
+                    // Collect Phones
+                    if (! blank($prospect->mobile)) {
+                        $phones[] = [
+                            'id' => (string) Str::orderedUuid(),
+                            'prospect_id' => $prospect->id,
+                            'number' => $prospect->mobile,
+                            'can_recieve_sms' => true,
+                            'type' => 'Mobile',
+                            'order' => 1,
+                        ];
                     }
 
-                    if (! empty($addresses)) {
-                        DB::table('prospect_addresses')->insert($addresses);
+                    if (! blank($prospect->phone)) {
+                        $phones[] = [
+                            'id' => (string) Str::orderedUuid(),
+                            'prospect_id' => $prospect->id,
+                            'number' => $prospect->phone,
+                            'can_recieve_sms' => false,
+                            'type' => 'Phone',
+                            'order' => 2,
+                        ];
                     }
 
-                    DB::table('prospects as p')
-                        ->whereIn('p.id', $prospects->pluck('id')->toArray())
-                        ->update([
-                            'primary_email_id' => DB::raw('(SELECT id FROM prospect_email_addresses WHERE prospect_id = p.id AND "order" = 1 LIMIT 1)'),
-                            'primary_phone_id' => DB::raw('(SELECT id FROM prospect_phone_numbers WHERE prospect_id = p.id AND "order" = 1 LIMIT 1)'),
-                            'primary_address_id' => DB::raw('(SELECT id FROM prospect_addresses WHERE prospect_id = p.id AND "order" = 1 LIMIT 1)'),
-                        ]);
-                });
+                    // Collect Addresses
+                    if (! blank($prospect->address)) {
+                        $addresses[] = [
+                            'id' => (string) Str::orderedUuid(),
+                            'prospect_id' => $prospect->id,
+                            'line_1' => $prospect->address,
+                            'line_2' => $prospect->address_2,
+                            'line_3' => $prospect->address_3,
+                            'city' => $prospect->city,
+                            'state' => $prospect->state,
+                            'postal' => $prospect->postal,
+                            'order' => 1,
+                        ];
+                    }
+                }
+
+                if (! empty($emails)) {
+                    DB::table('prospect_email_addresses')->insert($emails);
+                }
+
+                if (! empty($phones)) {
+                    DB::table('prospect_phone_numbers')->insert($phones);
+                }
+
+                if (! empty($addresses)) {
+                    DB::table('prospect_addresses')->insert($addresses);
+                }
             });
 
-        DB::commit();
+            DB::table('prospects')
+                ->update([
+                    'primary_email_id' => DB::raw('(SELECT email.id FROM prospect_email_addresses email WHERE email.prospect_id = prospects.id AND email."order" = 1 LIMIT 1)'),
+                    'primary_phone_id' => DB::raw('(SELECT phone.id FROM prospect_phone_numbers phone WHERE phone.prospect_id = prospects.id AND phone."order" = 1 LIMIT 1)'),
+                    'primary_address_id' => DB::raw('(SELECT address.id FROM prospect_addresses address WHERE address.prospect_id = prospects.id AND address."order" = 1 LIMIT 1)'),
+                ]);
+
+        });
     }
 
     public function down(): void

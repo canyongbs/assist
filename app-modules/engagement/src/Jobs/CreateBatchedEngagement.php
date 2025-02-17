@@ -40,6 +40,7 @@ use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Models\EngagementBatch;
 use AdvisingApp\Engagement\Notifications\EngagementNotification;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
+use App\Features\ProspectStudentRefactor;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -80,7 +81,11 @@ class CreateBatchedEngagement implements ShouldQueue
             $engagement->save();
 
             if (! $engagement->scheduled_at) {
-                if ($engagement->recipient->primaryEmail) {
+                if (ProspectStudentRefactor::active()) {
+                    if ($engagement->recipient->primaryEmail) {
+                        $engagement->recipient->notifyNow(new EngagementNotification($engagement));
+                    }
+                } else {
                     $engagement->recipient->notifyNow(new EngagementNotification($engagement));
                 }
             }
