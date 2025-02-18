@@ -215,11 +215,6 @@ class ListStudents extends ListRecords
                                 $response = Gate::inspect('delete', $record);
 
                                 if ($response->allowed()) {
-                                    if (ProspectStudentRefactor::active()) {
-                                        $record->emailAddresses()->delete();
-                                        $record->phoneNumbers()->delete();
-                                        $record->addresses()->delete();
-                                    }
                                     app(DeleteStudent::class)->execute($record);
                                     $deletedCount++;
                                 } else {

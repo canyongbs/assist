@@ -197,27 +197,7 @@ class ListProspects extends ListRecords
                 BulkActionGroup::make([
                     SubscribeBulkAction::make(),
                     BulkEngagementAction::make(context: 'prospects'),
-                    DeleteBulkAction::make()
-                        ->action(function (Collection $records) {
-                            if (ProspectStudentRefactor::active()) {
-                                /** @var Collection|Prospect[] $records */
-                                foreach ($records as $record) {
-                                    $record->emailAddresses()->delete();
-                                    $record->phoneNumbers()->delete();
-                                    $record->addresses()->delete();
-                                    $record->delete();
-                                }
-                            }
-
-                            foreach ($records as $record) {
-                                $record->delete();
-                            }
-
-                            Notification::make()
-                                ->title('Deleted')
-                                ->success()
-                                ->send();
-                        }),
+                    DeleteBulkAction::make(),
                     ToggleCareTeamBulkAction::make(),
                     BulkAction::make('bulk_update')
                         ->icon('heroicon-o-pencil-square')
