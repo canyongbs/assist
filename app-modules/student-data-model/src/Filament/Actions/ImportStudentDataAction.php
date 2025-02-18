@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Actions;
 
-use AdvisingApp\StudentDataModel\Actions\CleanUpFailedStudentDataImportTables;
 use AdvisingApp\StudentDataModel\Actions\CreateTemporaryStudentDataImportTables;
 use AdvisingApp\StudentDataModel\Actions\FinalizeStudentDataImport;
 use AdvisingApp\StudentDataModel\Filament\Imports\StudentEnrollmentImporter;
 use AdvisingApp\StudentDataModel\Filament\Imports\StudentImporter;
 use AdvisingApp\StudentDataModel\Filament\Imports\StudentProgramImporter;
+use AdvisingApp\StudentDataModel\Jobs\PrepareStudentDataCsvImport;
 use AdvisingApp\StudentDataModel\Models\Enrollment;
 use AdvisingApp\StudentDataModel\Models\Program;
 use AdvisingApp\StudentDataModel\Models\Student;
@@ -346,7 +346,6 @@ class ImportStudentDataAction
                         fn (PendingChain $chain) => $chain->onConnection($jobConnection),
                     )
                     ->finally(fn () => app(FinalizeStudentDataImport::class)->execute($import, $programsImport, $enrollmentsImport))
-                    ->catch(fn () => app(CleanUpFailedStudentDataImportTables::class)->execute($import, $programsImport, $enrollmentsImport))
                     ->dispatch();
 
                 Notification::make()
