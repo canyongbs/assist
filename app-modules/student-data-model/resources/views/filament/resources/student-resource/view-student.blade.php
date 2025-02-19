@@ -76,6 +76,10 @@
                     'cases' => CasesRelationManager::class,
                     'files' => EngagementFilesRelationManager::class,
                 ]"
+                :prevent-lazy-loading="[
+                    'messages',
+                ]"
+                x-on:openmessagepopup.window="activeTab = 'messages'"
             />
 
             <div class="grid grid-cols-1 gap-8 xl:grid-cols-2">

@@ -31,7 +31,7 @@
 
 </COPYRIGHT>
 --}}
-@props(['managers'])
+@props(['managers','preventLazyLoading' => []])
 
 @php
     use Illuminate\Support\Js;
@@ -59,7 +59,7 @@
                     [
                         'ownerRecord' => $this->getRecord(),
                         'pageClass' => static::class,
-                        'lazy' => $loop->first ? false : 'on-load',
+                        'lazy' => $loop->first ? false : (in_array($managerKey, $preventLazyLoading) ? false : 'on-load'),
                     ],
                     key('relation-manager-' . $managerKey)
                 )
