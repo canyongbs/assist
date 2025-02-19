@@ -47,14 +47,14 @@ class CreateTemporaryStudentDataImportTables
         ?Import $enrollmentsImport = null,
     ): void {
         DB::transaction(function () use ($studentsImport, $programsImport, $enrollmentsImport) {
-            DB::statement("create table \"import_{$studentsImport->getKey()}_students\" as table \"students\" with no data");
+            DB::statement("create table \"import_{$studentsImport->getKey()}_students\" (like \"students\" including all)");
 
             if ($programsImport) {
-                DB::statement("create table \"import_{$programsImport->getKey()}_programs\" as table \"programs\" with no data");
+                DB::statement("create table \"import_{$programsImport->getKey()}_programs\" (like \"programs\" including all)");
             }
 
             if ($enrollmentsImport) {
-                DB::statement("create table \"import_{$enrollmentsImport->getKey()}_enrollments\" as table \"enrollments\" with no data");
+                DB::statement("create table \"import_{$enrollmentsImport->getKey()}_enrollments\" (like \"enrollments\" including all)");
             }
         });
     }
