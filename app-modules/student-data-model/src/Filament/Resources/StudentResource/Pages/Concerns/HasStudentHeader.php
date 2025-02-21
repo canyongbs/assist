@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\Concerns;
 
+use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Filament\Actions\SubscribeHeaderAction;
 use AdvisingApp\StudentDataModel\Actions\DeleteStudent;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
@@ -77,12 +78,12 @@ trait HasStudentHeader
                 ...(filled($student->preferred) ? [["Goes by \"{$student->preferred}\"", 'heroicon-m-heart', null]] : []),
                 ...(
                     ProspectStudentRefactor::active()
-                ? (filled($student->primaryPhone) ? [[$student->primaryPhone->number, 'heroicon-m-phone', $student->primaryPhone->can_recieve_sms ? "\$dispatch('openmessagepopup', { 'type' : 'sms', 'id' : {$student->getKey()} })" : null]] : [])
+                ? (filled($student->primaryPhone) ? [[$student->primaryPhone->number, 'heroicon-m-phone', $student->primaryPhone->can_recieve_sms ? "\$dispatch('openengagementaction', { 'type' : '" . NotificationChannel::Sms->value . "', 'id' : '{$student?->primaryPhone->getKey()}' })" : null]] : [])
                 : (filled($student->phone) ? [[$student->phone, 'heroicon-m-phone', null]] : [])
                 ),
                 ...(
                     ProspectStudentRefactor::active()
-                    ? (filled($student->primaryEmail) ? [[$student->primaryEmail->address, 'heroicon-m-envelope', "\$dispatch('openmessagepopup', { 'type' : 'email', 'id': {$student->getKey()} })"]] : [])
+                    ? (filled($student->primaryEmail) ? [[$student->primaryEmail->address, 'heroicon-m-envelope', "\$dispatch('openengagementaction', { 'type' : '" . NotificationChannel::Email->value . "', 'id': '{$student->primaryEmail->getKey()}' })"]] : [])
                     : (filled($student->email) ? [[$student->email, 'heroicon-m-envelope', null]] : [])
                 ),
                 ...(filled($student->sisid) ? [[$student->sisid, 'heroicon-m-identification', null]] : []),

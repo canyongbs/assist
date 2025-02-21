@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\Concerns;
 
+use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Filament\Actions\SubscribeHeaderAction;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\ConvertToStudent;
@@ -75,19 +76,19 @@ trait HasProspectHeader
             ],
             'breadcrumbs' => $this->getBreadcrumbs(),
             'details' => [
-                ['Prospect', 'heroicon-m-magnifying-glass-circle'],
-                ...(filled($prospect->preferred) ? [["Goes by \"{$prospect->preferred}\"", 'heroicon-m-heart']] : []),
+                ['Prospect', 'heroicon-m-magnifying-glass-circle',null],
+                ...(filled($prospect->preferred) ? [["Goes by \"{$prospect->preferred}\"", 'heroicon-m-heart',null]] : []),
                 ...(
-                    ProspectStudentRefactor::active()
-                      ? (filled($prospect->primaryPhone) ? [[$prospect->primaryPhone->number, 'heroicon-m-phone']] : [])
-                      : (filled($prospect->phone) ? [[$prospect->phone, 'heroicon-m-phone']] : [])
+                  ProspectStudentRefactor::active()
+                ? (filled($prospect->primaryPhone) ? [[$prospect->primaryPhone->number, 'heroicon-m-phone', $prospect->primaryPhone->can_recieve_sms ? "\$dispatch('openengagementaction', { 'type' : '" . NotificationChannel::Sms->value . "', 'id' : '{$prospect?->primaryPhone->getKey()}' })" : null]] : [])
+                : (filled($prospect->phone) ? [[$prospect->phone, 'heroicon-m-phone', null]] : [])
                 ),
                 ...(
                     ProspectStudentRefactor::active()
-                    ? (filled($prospect->primaryEmail) ? [[$prospect->primaryEmail->address, 'heroicon-m-envelope']] : [])
-                    : (filled($prospect->email) ? [[$prospect->email, 'heroicon-m-envelope']] : [])
+                    ? (filled($prospect->primaryEmail) ? [[$prospect->primaryEmail->address, 'heroicon-m-envelope', "\$dispatch('openengagementaction', { 'type' : '" . NotificationChannel::Email->value . "', 'id': '{$prospect->primaryEmail->getKey()}' })"]] : [])
+                    : (filled($prospect->email) ? [[$prospect->email, 'heroicon-m-envelope', null]] : [])
                 ),
-                ...(filled($prospect->hsgrad) ? [[$prospect->hsgrad, 'heroicon-m-building-library']] : []),
+                ...(filled($prospect->hsgrad) ? [[$prospect->hsgrad, 'heroicon-m-building-library',null]] : []),
             ],
             'hasSisSystem' => $sisSettings->is_enabled && $sisSettings->sis_system,
             'educatable' => $prospect,
