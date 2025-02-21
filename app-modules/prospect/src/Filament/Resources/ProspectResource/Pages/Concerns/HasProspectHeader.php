@@ -80,7 +80,7 @@ trait HasProspectHeader
                 ...(filled($prospect->preferred) ? [["Goes by \"{$prospect->preferred}\"", 'heroicon-m-heart',null]] : []),
                 ...(
                   ProspectStudentRefactor::active()
-                ? (filled($prospect->primaryPhone) ? [[$prospect->primaryPhone->number, 'heroicon-m-phone', $prospect->primaryPhone->can_recieve_sms ? "\$dispatch('openengagementaction', { 'type' : '" . NotificationChannel::Sms->value . "', 'id' : '{$prospect?->primaryPhone->getKey()}' })" : null]] : [])
+                ? (filled($prospect->primaryPhone) ? [[$prospect->primaryPhone->number, 'heroicon-m-phone', !NotificationChannel::tryFrom(NotificationChannel::Sms->value)?->getCaseDisabled() && $prospect->primaryPhone->can_recieve_sms ? "\$dispatch('openengagementaction', { 'type' : '" . NotificationChannel::Sms->value . "', 'id' : '{$prospect?->primaryPhone->getKey()}' })" : null]] : [])
                 : (filled($prospect->phone) ? [[$prospect->phone, 'heroicon-m-phone', null]] : [])
                 ),
                 ...(

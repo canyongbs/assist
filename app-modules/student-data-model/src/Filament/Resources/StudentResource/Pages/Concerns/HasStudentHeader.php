@@ -78,7 +78,7 @@ trait HasStudentHeader
                 ...(filled($student->preferred) ? [["Goes by \"{$student->preferred}\"", 'heroicon-m-heart', null]] : []),
                 ...(
                     ProspectStudentRefactor::active()
-                ? (filled($student->primaryPhone) ? [[$student->primaryPhone->number, 'heroicon-m-phone', $student->primaryPhone->can_recieve_sms ? "\$dispatch('openengagementaction', { 'type' : '" . NotificationChannel::Sms->value . "', 'id' : '{$student?->primaryPhone->getKey()}' })" : null]] : [])
+                ? (filled($student->primaryPhone) ? [[$student->primaryPhone->number, 'heroicon-m-phone', !NotificationChannel::tryFrom(NotificationChannel::Sms->value)?->getCaseDisabled() && $student->primaryPhone->can_recieve_sms ? "\$dispatch('openengagementaction', { 'type' : '" . NotificationChannel::Sms->value . "', 'id' : '{$student?->primaryPhone->getKey()}' })" : null]] : [])
                 : (filled($student->phone) ? [[$student->phone, 'heroicon-m-phone', null]] : [])
                 ),
                 ...(
