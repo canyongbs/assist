@@ -39,34 +39,15 @@ namespace Database\Seeders;
 use AdvisingApp\StudentDataModel\Models\Enrollment;
 use AdvisingApp\StudentDataModel\Models\Program;
 use AdvisingApp\StudentDataModel\Models\Student;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Seeder;
 
 class StudentSeeder extends Seeder
 {
     public function run(): void
     {
-        /** @var Collection $students */
-        $students = Student::factory(500)
-            ->make();
-
-        $enrollments = [];
-        $programs = [];
-
-        $students->each(function ($student) use (&$enrollments, &$programs) {
-            foreach (Enrollment::factory(5)->make(['sisid' => $student->sisid])->toArray() as $enrollment) {
-                $enrollments[] = $enrollment;
-            }
-
-            $programs[] = Program::factory()->make(
-                [
-                    'sisid' => $student->sisid,
-                ]
-            )->toArray();
-        });
-
-        Student::insert($students->toArray());
-        Enrollment::insert($enrollments);
-        Program::insert($programs);
+        Student::factory(500)
+            ->has(Enrollment::factory(5), 'enrollments')
+            ->has(Program::factory(), 'programs')
+            ->create();
     }
 }

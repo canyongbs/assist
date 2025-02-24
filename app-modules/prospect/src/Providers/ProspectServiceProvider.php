@@ -39,6 +39,9 @@ namespace AdvisingApp\Prospect\Providers;
 use AdvisingApp\Prospect\Enums\ProspectStatusColorOptions;
 use AdvisingApp\Prospect\Enums\SystemProspectClassification;
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Prospect\Models\ProspectAddress;
+use AdvisingApp\Prospect\Models\ProspectEmailAddress;
+use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
 use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
 use AdvisingApp\Prospect\ProspectPlugin;
@@ -62,6 +65,9 @@ class ProspectServiceProvider extends ServiceProvider
             'prospect' => Prospect::class,
             'prospect_source' => ProspectSource::class,
             'prospect_status' => ProspectStatus::class,
+            'prospect_email_address' => ProspectEmailAddress::class,
+            'prospect_address' => ProspectAddress::class,
+            'prospect_phone_number' => ProspectPhoneNumber::class,
         ]);
 
         $this->discoverSchema(__DIR__ . '/../../graphql/*');

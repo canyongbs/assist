@@ -38,6 +38,7 @@ namespace AdvisingApp\Engagement\Jobs;
 
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Notifications\EngagementNotification;
+use App\Features\ProspectStudentRefactor;
 use App\Models\Tenant;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Database\Eloquent\Builder;
@@ -72,7 +73,13 @@ class DeliverEngagements implements ShouldQueue
                         return;
                     }
 
-                    $engagement->recipient->notify(new EngagementNotification($engagement));
+                    if (ProspectStudentRefactor::active()) {
+                        if ($engagement->recipient->primaryEmail) {
+                            $engagement->recipient->notify(new EngagementNotification($engagement));
+                        }
+                    } else {
+                        $engagement->recipient->notify(new EngagementNotification($engagement));
+                    }
                 }),
                 250,
             );

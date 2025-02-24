@@ -43,6 +43,7 @@ use AdvisingApp\Engagement\Models\EmailTemplate;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Prospect\Models\Prospect;
+use App\Features\ProspectStudentRefactor;
 use Filament\Actions\StaticAction;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action as FormComponentAction;
@@ -80,6 +81,15 @@ class RelationManagerSendEngagementAction extends CreateAction
 
                 return auth()->user()->can('create', [Engagement::class, $ownerRecord instanceof Prospect ? $ownerRecord : null]);
             })
+            ->fillForm(function (RelationManagerSendEngagementAction $action) {
+                if (ProspectStudentRefactor::active()) {
+                    return [
+                        'channel' => $action->getArguments()['type'] ?? NotificationChannel::Email->value,
+                        'email' => $action->getArguments()['id'] ?? null,
+                        'phone' => $action->getArguments()['id'] ?? null,
+                    ];
+                }
+            })
             ->form(fn (Form $form) => $form->schema([
                 Select::make('channel')
                     ->label('What would you like to send?')
@@ -87,9 +97,32 @@ class RelationManagerSendEngagementAction extends CreateAction
                     ->default(NotificationChannel::Email->value)
                     ->disableOptionWhen(fn (RelationManager $livewire, string $value): bool => (($value == (NotificationChannel::Sms->value) && ! $livewire->getOwnerRecord()->canRecieveSms())) || NotificationChannel::tryFrom($value)?->getCaseDisabled())
                     ->selectablePlaceholder(false)
-                    ->live(),
+                    ->live()
+                    ->afterStateUpdated(function (Set $set) {
+                        $set('email', null);
+                        $set('phone', null);
+                    }),
                 Fieldset::make('Content')
                     ->schema([
+                        Select::make('email')
+                            ->options(function (RelationManager $livewire) {
+                                return $livewire->getOwnerRecord()->emailAddresses()->limit(10)->pluck('address', 'id')->toArray();
+                            })
+                            ->preload()
+                            ->getSearchResultsUsing(fn (RelationManager $livewire, string $search): array => $livewire->getOwnerRecord()->emailAddresses()->where('address', 'like', "%{$search}%")->limit(50)->pluck('address', 'id')->toArray())
+                            ->visible(fn (Get $get) => ProspectStudentRefactor::active() && $get('channel') === NotificationChannel::Email->value)
+                            ->columnSpanFull()
+                            ->searchable(),
+                        Select::make('phone')
+                            ->options(function (RelationManager $livewire) {
+                                return $livewire->getOwnerRecord()->phoneNumbers()->limit(10)->pluck('number', 'id')->toArray();
+                            })
+                            ->visible()
+                            ->preload()
+                            ->getSearchResultsUsing(fn (RelationManager $livewire, string $search): array => $livewire->getOwnerRecord()->phoneNumbers()->where('number', 'like', "%{$search}%")->limit(50)->pluck('number', 'id')->toArray())
+                            ->visible(fn (Get $get) => ProspectStudentRefactor::active() && $get('channel') === NotificationChannel::Sms->value)
+                            ->columnSpanFull()
+                            ->searchable(),
                         TextInput::make('subject')
                             ->autofocus()
                             ->required()

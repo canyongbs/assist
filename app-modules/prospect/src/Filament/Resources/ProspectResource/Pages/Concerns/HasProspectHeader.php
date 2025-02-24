@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\Concerns;
 
+use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Filament\Actions\SubscribeHeaderAction;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\ConvertToStudent;
@@ -44,6 +45,7 @@ use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\ProspectTag
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ViewProspect;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
+use App\Features\ProspectStudentRefactor;
 use App\Settings\DisplaySettings;
 use Filament\Actions\EditAction;
 use Illuminate\Contracts\View\View;
@@ -55,6 +57,7 @@ trait HasProspectHeader
         $sisSettings = app(StudentInformationSystemSettings::class);
 
         $prospect = $this->getRecord();
+
         $prospectName = filled($prospect->full_name)
             ? $prospect->full_name
             : "{$prospect->first_name} {$prospect->last_name}";
@@ -73,11 +76,19 @@ trait HasProspectHeader
             ],
             'breadcrumbs' => $this->getBreadcrumbs(),
             'details' => [
-                ['Prospect', 'heroicon-m-magnifying-glass-circle'],
-                ...(filled($prospect->preferred) ? [["Goes by \"{$prospect->preferred}\"", 'heroicon-m-heart']] : []),
-                ...(filled($prospect->phone) ? [[$prospect->phone, 'heroicon-m-phone']] : []),
-                ...(filled($prospect->email) ? [[$prospect->email, 'heroicon-m-envelope']] : []),
-                ...(filled($prospect->hsgrad) ? [[$prospect->hsgrad, 'heroicon-m-building-library']] : []),
+                ['Prospect', 'heroicon-m-magnifying-glass-circle', null],
+                ...(filled($prospect->preferred) ? [["Goes by \"{$prospect->preferred}\"", 'heroicon-m-heart', null]] : []),
+                ...(
+                    ProspectStudentRefactor::active()
+                ? (filled($prospect->primaryPhone) ? [[$prospect->primaryPhone->number, 'heroicon-m-phone', ! NotificationChannel::tryFrom(NotificationChannel::Sms->value)?->getCaseDisabled() && $prospect->primaryPhone->can_recieve_sms ? "\$dispatch('openengagementaction', { 'type' : '" . NotificationChannel::Sms->value . "', 'id' : '{$prospect?->primaryPhone->getKey()}' })" : null]] : [])
+                : (filled($prospect->phone) ? [[$prospect->phone, 'heroicon-m-phone', null]] : [])
+                ),
+                ...(
+                    ProspectStudentRefactor::active()
+                    ? (filled($prospect->primaryEmail) ? [[$prospect->primaryEmail->address, 'heroicon-m-envelope', "\$dispatch('openengagementaction', { 'type' : '" . NotificationChannel::Email->value . "', 'id': '{$prospect->primaryEmail->getKey()}' })"]] : [])
+                    : (filled($prospect->email) ? [[$prospect->email, 'heroicon-m-envelope', null]] : [])
+                ),
+                ...(filled($prospect->hsgrad) ? [[$prospect->hsgrad, 'heroicon-m-building-library', null]] : []),
             ],
             'hasSisSystem' => $sisSettings->is_enabled && $sisSettings->sis_system,
             'educatable' => $prospect,

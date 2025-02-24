@@ -60,6 +60,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\HtmlString;
+use Livewire\Attributes\On;
 
 class EngagementsRelationManager extends RelationManager
 {
@@ -228,12 +229,19 @@ class EngagementsRelationManager extends RelationManager
                             )
                     ),
             ])
-            ->poll('5s');
+            ->poll('5s')
+            ->deferLoading();
     }
 
     public static function canViewForRecord(Model $ownerRecord, string $pageClass): bool
     {
         return auth()->user()->can('viewAny', Engagement::class)
             || auth()->user()->can('viewAny', EngagementResponse::class);
+    }
+
+    #[On('openengagementaction')]
+    public function handleTriggeredEvent($type, $id)
+    {
+        $this->mountTableAction(name: 'engage', arguments: ['type' => $type, 'id' => $id]);
     }
 }

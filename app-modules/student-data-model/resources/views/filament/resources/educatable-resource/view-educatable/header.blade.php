@@ -55,11 +55,22 @@
                     <div class="flex flex-col gap-3">
                         <div
                             class="flex flex-wrap items-center gap-3 text-sm font-medium text-gray-600 dark:text-gray-400 lg:gap-6">
-                            @foreach ($details as [$detailLabel, $detailIcon])
+                            @foreach ($details as [$detailLabel, $detailIcon, $detailOnClick])
                                 <div class="flex items-center gap-2">
                                     @svg($detailIcon, 'size-5')
-
-                                    {{ $detailLabel }}
+                                    @if ($detailOnClick)
+                                        <x-filament::link
+                                            color="gray"
+                                            tag="button"
+                                            :x-on:click="$detailOnClick"
+                                        >
+                                            {{ $detailLabel }}
+                                        </x-filament::link>
+                                    @else
+                                        <span>
+                                            {{ $detailLabel }}
+                                        </span>
+                                    @endif
                                 </div>
                             @endforeach
                         </div>

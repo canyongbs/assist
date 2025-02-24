@@ -44,6 +44,7 @@ use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\CaseManagement\Notifications\EducatableCaseClosedNotification;
 use AdvisingApp\CaseManagement\Notifications\EducatableCaseOpenedNotification;
 use AdvisingApp\Notification\Events\TriggeredAutoSubscription;
+use App\Features\ProspectStudentRefactor;
 use App\Models\User;
 
 class CaseObserver
@@ -62,7 +63,13 @@ class CaseObserver
         }
 
         if ($case->status->classification === SystemCaseClassification::Open) {
-            $case->respondent->notify(new EducatableCaseOpenedNotification($case));
+            if (ProspectStudentRefactor::active()) {
+                if ($case->respondent->primaryEmail) {
+                    $case->respondent->notify(new EducatableCaseOpenedNotification($case));
+                }
+            } else {
+                $case->respondent->notify(new EducatableCaseOpenedNotification($case));
+            }
         }
     }
 
@@ -86,7 +93,9 @@ class CaseObserver
             $case->wasChanged('status_id')
             && $case->status->classification === SystemCaseClassification::Closed
         ) {
-            $case->respondent->notify(new EducatableCaseClosedNotification($case));
+            if ($case->respondent->primaryEmail) {
+                $case->respondent->notify(new EducatableCaseClosedNotification($case));
+            }
         }
     }
 }

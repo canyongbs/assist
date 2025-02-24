@@ -37,9 +37,11 @@
 namespace AdvisingApp\StudentDataModel\Filament\Imports;
 
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Features\ProspectStudentRefactor;
 use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\Imports\Importer;
 use Filament\Actions\Imports\Models\Import;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class StudentImporter extends Importer
@@ -113,21 +115,7 @@ class StudentImporter extends Importer
                     'email',
                     'max:255',
                 ]),
-            ImportColumn::make('email_2')
-                ->example('johnsmith@hotmail.com')
-                ->rules([
-                    'nullable',
-                    'email',
-                    'max:255',
-                ]),
             ImportColumn::make('mobile')
-                ->example('+1 (555) 555-5555')
-                ->rules([
-                    'nullable',
-                    'string',
-                    'max:255',
-                ]),
-            ImportColumn::make('phone')
                 ->example('+1 (555) 555-5555')
                 ->rules([
                     'nullable',
@@ -257,5 +245,47 @@ class StudentImporter extends Importer
         }
 
         return $body;
+    }
+
+    public function afterCreate(): void
+    {
+        if (ProspectStudentRefactor::active()) {
+            /** @var Prospect $record */
+            $record = $this->record;
+
+            $primaryEmail = $record->emailAddresses()->create([
+                'address' => $this->data['email'],
+                'order' => DB::raw("(SELECT COALESCE(MAX(\"order\"), 0) + 1 FROM student_email_addresses WHERE sisid = '{$record->id}')"),
+            ]);
+
+            $record->primaryEmail()->associate($primaryEmail);
+
+            if (! blank($this->data['mobile'])) {
+                $primaryMobile = $record->phoneNumbers()->create([
+                    'number' => $this->data['mobile'],
+                    'type' => 'Mobile',
+                    'can_recieve_sms' => $this->data['sms_opt_out'],
+                    'order' => DB::raw("(SELECT COALESCE(MAX(\"order\"), 0) + 1 FROM student_phone_numbers WHERE sisid = '{$record->id}')"),
+                ]);
+
+                $record->primaryPhone()->associate($primaryMobile);
+            }
+
+            if (! blank($this->data['address']) || ! blank($this->data['address_2'])) {
+                $primaryAddress = $record->addresses()->create([
+                    'line_1' => $this->data['address'],
+                    'line_2' => $this->data['address2'],
+                    'line_3' => $this->data['address3'],
+                    'city' => $this->data['city'],
+                    'state' => $this->data['state'],
+                    'postal' => $this->data['postal'],
+                    'order' => DB::raw("(SELECT COALESCE(MAX(\"order\"), 0) + 1 FROM student_addresses WHERE sisid = '{$record->id}')"),
+                ]);
+
+                $record->primaryAddress()->associate($primaryAddress);
+            }
+
+            $record->save();
+        }
     }
 }

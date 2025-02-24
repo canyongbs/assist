@@ -39,6 +39,7 @@ namespace AdvisingApp\Form\Models;
 use AdvisingApp\Engagement\Actions\GenerateEngagementBodyContent;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Features\ProspectStudentRefactor;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -85,7 +86,7 @@ class FormEmailAutoReply extends BaseModel implements HasMedia
             'student first name' => $author->getAttribute($author->displayFirstNameKey()),
             'student last name' => $author->getAttribute($author->displayLastNameKey()),
             'student full name' => $author->getAttribute($author->displayNameKey()),
-            'student email' => $author->getAttribute($author->displayEmailKey()),
+            'student email' => ProspectStudentRefactor::active() ? $author->primaryEmail->address : $author->getAttribute($author->displayEmailKey()),
             'student preferred name' => $author->getAttribute($author->displayPreferredNameKey()),
         ];
     }

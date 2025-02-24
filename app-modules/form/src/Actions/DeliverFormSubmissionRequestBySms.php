@@ -37,14 +37,24 @@
 namespace AdvisingApp\Form\Actions;
 
 use AdvisingApp\Form\Notifications\FormSubmissionRequestSmsNotification;
+use App\Features\ProspectStudentRefactor;
 
 class DeliverFormSubmissionRequestBySms extends DeliverFormSubmissionRequest
 {
     public function handle(): void
     {
-        $this
-            ->submission
-            ->author
-            ->notify(new FormSubmissionRequestSmsNotification($this->submission));
+        if (ProspectStudentRefactor::active()) {
+            if ($this->submission->author->primaryPhone) {
+                $this
+                    ->submission
+                    ->author
+                    ->notify(new FormSubmissionRequestSmsNotification($this->submission));
+            }
+        } else {
+            $this
+                ->submission
+                ->author
+                ->notify(new FormSubmissionRequestSmsNotification($this->submission));
+        }
     }
 }
