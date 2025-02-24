@@ -42,6 +42,7 @@ use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Audit\Models\Audit;
 use AdvisingApp\Campaign\Actions\ExecuteCampaignActions;
 use AdvisingApp\Engagement\Jobs\DeliverEngagements as DeliverEngagementsJob;
+use AdvisingApp\Engagement\Jobs\GatherAndDispatchSesS3InboundEmails;
 use AdvisingApp\Engagement\Models\EngagementFile;
 use AdvisingApp\Form\Models\FormAuthentication;
 use AdvisingApp\MeetingCenter\Console\Commands\RefreshCalendarRefreshTokens;
@@ -68,6 +69,12 @@ class Kernel extends ConsoleKernel
             ->onOneServer()
             ->withoutOverlapping(720)
             ->monitorName('Landlord Prune MonitoredScheduledTaskLogItems');
+
+        $schedule->job(new GatherAndDispatchSesS3InboundEmails())
+            ->everyMinute()
+            ->name('Gather and Dispatch SES S3 Inbound Emails')
+            ->monitorName('Gather and Dispatch SES S3 Inbound Emails')
+            ->onOneServer();
 
         Tenant::query()
             ->tap(new SetupIsComplete())

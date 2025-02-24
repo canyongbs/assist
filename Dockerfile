@@ -11,6 +11,7 @@ RUN apt-get update \
     gnupg \
     php8.2-apcu \
     php8.2-imagick \
+    php8.2-mailparse \
     php8.2-pcov \
     php8.2-pgsql \
     php8.2-redis \
@@ -40,6 +41,7 @@ RUN apt-get update \
     gnupg \
     php8.2-apcu \
     php8.2-imagick \
+    php8.2-mailparse \
     php8.2-pcov \
     php8.2-pgsql \
     php8.2-redis \

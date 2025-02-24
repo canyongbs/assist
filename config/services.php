@@ -64,6 +64,10 @@ return [
         'region' => env('AWS_SES_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'kms' => [
+        'ses_s3_key_id' => env('AWS_KMS_SES_S3_KEY_ID'),
+    ],
+
     'azure' => [
         'client_id' => env('AZURE_CLIENT_ID'),
         'client_secret' => env('AZURE_CLIENT_SECRET'),

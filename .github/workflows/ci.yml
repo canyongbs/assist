@@ -17,6 +17,7 @@ jobs:
       - uses: shivammathur/setup-php@v2
         with:
           php-version: "8.2"
+          extensions: mailparse
 
       - name: Setup Dependencies
         uses: ./.github/actions/composer-dependency-setup
@@ -70,6 +71,7 @@ jobs:
       - uses: shivammathur/setup-php@v2
         with:
           php-version: "8.2"
+          extensions: mailparse
 
       - name: Checkout code | Internal
         if: ${{ github.event_name == 'merge_group' || github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]' }}
@@ -165,7 +167,7 @@ jobs:
       - uses: shivammathur/setup-php@v2
         with:
           php-version: "8.2"
-          extensions: gd, gmp, redis
+          extensions: gd, gmp, redis, mailparse
 
       - uses: actions/checkout@v4
         with:
@@ -251,7 +253,7 @@ jobs:
       - uses: shivammathur/setup-php@v2
         with:
           php-version: "8.2"
-          extensions: gd, gmp, redis
+          extensions: gd, gmp, redis, mailparse
 
       - uses: actions/checkout@v4
         with:

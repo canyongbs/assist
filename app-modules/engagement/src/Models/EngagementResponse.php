@@ -37,6 +37,7 @@
 namespace AdvisingApp\Engagement\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\Engagement\Enums\EngagementResponseType;
 use AdvisingApp\Engagement\Models\Contracts\HasDeliveryMethod;
 use AdvisingApp\Engagement\Observers\EngagementResponseObserver;
 use AdvisingApp\Notification\Enums\NotificationChannel;
@@ -45,6 +46,7 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
 use AdvisingApp\Timeline\Models\Timeline;
 use AdvisingApp\Timeline\Timelines\EngagementResponseTimeline;
+use App\Features\InboundEmailsUpdates;
 use App\Models\BaseModel;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
@@ -55,26 +57,40 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
 use Illuminate\Support\HtmlString;
 use OwenIt\Auditing\Contracts\Auditable;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Symfony\Component\HtmlSanitizer\HtmlSanitizer;
+use Symfony\Component\HtmlSanitizer\HtmlSanitizerConfig;
 
 /**
  * @mixin IdeHelperEngagementResponse
  */
 #[ObservedBy([EngagementResponseObserver::class])]
-class EngagementResponse extends BaseModel implements Auditable, ProvidesATimeline, HasDeliveryMethod
+class EngagementResponse extends BaseModel implements Auditable, ProvidesATimeline, HasDeliveryMethod, HasMedia
 {
     use AuditableTrait;
     use SoftDeletes;
+    use InteractsWithMedia;
 
     protected $fillable = [
         'sender_id',
         'sender_type',
         'content',
         'sent_at',
+        'subject',
+        'type',
+        'raw',
     ];
 
     protected $casts = [
         'sent_at' => 'datetime',
+        'type' => EngagementResponseType::class,
     ];
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('attachments');
+    }
 
     public function timelineRecord(): MorphOne
     {
@@ -93,7 +109,16 @@ class EngagementResponse extends BaseModel implements Auditable, ProvidesATimeli
 
     public function getBody(): HtmlString
     {
-        return str($this->content)->sanitizeHtml()->toHtmlString();
+        return str(
+            (new HtmlSanitizer(
+                (new HtmlSanitizerConfig())
+                    ->allowSafeElements()
+                    ->forceHttpsUrls()
+                    ->withMaxInputLength(500000)
+            ))
+                ->sanitize($this->content)
+        )
+            ->toHtmlString();
     }
 
     public function sender(): MorphTo
@@ -117,6 +142,13 @@ class EngagementResponse extends BaseModel implements Auditable, ProvidesATimeli
 
     public function getDeliveryMethod(): NotificationChannel
     {
+        if (InboundEmailsUpdates::active()) {
+            return match ($this->type) {
+                EngagementResponseType::Email => NotificationChannel::Email,
+                EngagementResponseType::Sms => NotificationChannel::Sms,
+            };
+        }
+
         return NotificationChannel::Sms;
     }
 }

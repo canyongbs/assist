@@ -34,35 +34,32 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Webhook\Models;
+namespace AdvisingApp\Engagement\Jobs;
 
-use AdvisingApp\Webhook\Enums\InboundWebhookSource;
-use DateTimeInterface;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Model;
-use Spatie\Multitenancy\Models\Concerns\UsesLandlordConnection;
+use App\Features\InboundEmailsUpdates;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Support\Facades\Storage;
+use Spatie\Multitenancy\Jobs\NotTenantAware;
 
-/**
- * @mixin IdeHelperLandlordInboundWebhook
- */
-class LandlordInboundWebhook extends Model
+class GatherAndDispatchSesS3InboundEmails implements ShouldQueue, NotTenantAware, ShouldBeUnique
 {
-    use HasUuids;
-    use UsesLandlordConnection;
+    use Queueable;
 
-    protected $fillable = [
-        'source',
-        'event',
-        'url',
-        'payload',
-    ];
+    // Unique for 15 minutes
+    public $uniqueFor = 900;
 
-    protected $casts = [
-        'source' => InboundWebhookSource::class,
-    ];
-
-    protected function serializeDate(DateTimeInterface $date): string
+    public function handle(): void
     {
-        return $date->format(config('project.datetime_format') ?? 'Y-m-d H:i:s');
+        if (! InboundEmailsUpdates::active()) {
+            return;
+        }
+
+        collect(Storage::disk('s3-inbound-email')->files())
+            ->filter(fn (string $file) => $file !== 'AMAZON_SES_SETUP_NOTIFICATION')
+            ->each(function (string $file) {
+                dispatch(new ProcessSesS3InboundEmail($file));
+            });
     }
 }

@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Engagement\Database\Factories;
 
+use AdvisingApp\Engagement\Enums\EngagementResponseType;
 use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
@@ -68,6 +69,15 @@ class EngagementResponseFactory extends Factory
             },
             'content' => fake()->sentence(),
             'sent_at' => fake()->dateTimeBetween('-1 year', '-1 day'),
+            'type' => fake()->randomElement(EngagementResponseType::cases()),
+            'subject' => function ($attributes) {
+                return match ($attributes['type']) {
+                    EngagementResponseType::Email => fake()->sentence(),
+                    EngagementResponseType::Sms => null,
+                };
+            },
+            // Bring in a raw value here for testing later
+            'raw' => null,
         ];
     }
 }

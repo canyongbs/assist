@@ -44,10 +44,12 @@ use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Models\EmailMessageEvent;
 use AdvisingApp\Notification\Models\SmsMessageEvent;
 use AdvisingApp\Timeline\Models\Timeline;
+use App\Features\InboundEmailsUpdates;
 use App\Features\MessageEventsDisplay;
 use Filament\Infolists\Components\Fieldset as InfolistFieldset;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\Split;
 use Filament\Infolists\Components\Tabs;
 use Filament\Infolists\Components\Tabs\Tab;
 use Filament\Infolists\Components\TextEntry;
@@ -133,12 +135,25 @@ class EngagementsRelationManager extends RelationManager
                     ]),
             ],
             EngagementResponse::class => [
-                TextEntry::make('body')
-                    ->getStateUsing(fn (Timeline $record): HtmlString => $record->timelineable->getBody())
+                Split::make([
+                    Section::make([
+                        TextEntry::make('subject')
+                            ->getStateUsing(fn (Timeline $record): ?string => $record->timelineable->subject)
+                            ->visible(fn () => InboundEmailsUpdates::active())
+                            ->hidden(fn ($state): bool => blank($state))
+                            ->columnSpanFull(),
+                        TextEntry::make('body')
+                            ->getStateUsing(fn (Timeline $record): HtmlString => $record->timelineable->getBody())
+                            ->columnSpanFull(),
+                    ]),
+                    Section::make([
+                        TextEntry::make('sent_at')
+                            ->getStateUsing(fn (Timeline $record): string => $record->timelineable->sent_at)
+                            ->dateTime('Y-m-d H:i:s'),
+                    ])->grow(false),
+                ])
+                    ->from('md')
                     ->columnSpanFull(),
-                TextEntry::make('sent_at')
-                    ->getStateUsing(fn (Timeline $record): string => $record->timelineable->sent_at)
-                    ->dateTime('Y-m-d H:i:s'),
             ],
         });
     }

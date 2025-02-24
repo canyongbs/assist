@@ -34,35 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Webhook\Models;
+namespace AdvisingApp\Engagement\Enums;
 
-use AdvisingApp\Webhook\Enums\InboundWebhookSource;
-use DateTimeInterface;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Model;
-use Spatie\Multitenancy\Models\Concerns\UsesLandlordConnection;
+use Filament\Support\Contracts\HasLabel;
 
-/**
- * @mixin IdeHelperLandlordInboundWebhook
- */
-class LandlordInboundWebhook extends Model
+enum EngagementResponseType: string implements HasLabel
 {
-    use HasUuids;
-    use UsesLandlordConnection;
+    case Email = 'email';
+    case Sms = 'sms';
 
-    protected $fillable = [
-        'source',
-        'event',
-        'url',
-        'payload',
-    ];
-
-    protected $casts = [
-        'source' => InboundWebhookSource::class,
-    ];
-
-    protected function serializeDate(DateTimeInterface $date): string
+    public function getLabel(): string
     {
-        return $date->format(config('project.datetime_format') ?? 'Y-m-d H:i:s');
+        return $this->name;
     }
 }

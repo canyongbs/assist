@@ -103,6 +103,20 @@ return [
             'root' => env('AWS_S3_PUBLIC_ROOT', env('AWS_S3_ROOT') . '/PUBLIC'),
             'media_library_visibility' => 'public',
         ],
+
+        's3-inbound-email' => [
+            'driver' => 's3',
+            'key' => env('AWS_S3_ACCESS_KEY_ID'),
+            'secret' => env('AWS_S3_SECRET_ACCESS_KEY'),
+            'region' => env('AWS_S3_DEFAULT_REGION'),
+            'bucket' => env('AWS_S3_BUCKET'),
+            'url' => env('AWS_S3_URL'),
+            'endpoint' => env('AWS_S3_ENDPOINT'),
+            'use_path_style_endpoint' => env('AWS_S3_USE_PATH_STYLE_ENDPOINT', false),
+            'throw' => true,
+            'root' => env('AWS_S3_ROOT') . '/inbound-email',
+            'media_library_visibility' => 'private',
+        ],
     ],
 
     /*

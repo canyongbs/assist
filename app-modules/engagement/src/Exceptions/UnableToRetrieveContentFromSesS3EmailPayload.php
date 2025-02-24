@@ -34,35 +34,36 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Webhook\Models;
+namespace AdvisingApp\Engagement\Exceptions;
 
-use AdvisingApp\Webhook\Enums\InboundWebhookSource;
-use DateTimeInterface;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Model;
-use Spatie\Multitenancy\Models\Concerns\UsesLandlordConnection;
+use Exception;
+use Throwable;
 
-/**
- * @mixin IdeHelperLandlordInboundWebhook
- */
-class LandlordInboundWebhook extends Model
+class UnableToRetrieveContentFromSesS3EmailPayload extends Exception
 {
-    use HasUuids;
-    use UsesLandlordConnection;
+    protected string $file;
 
-    protected $fillable = [
-        'source',
-        'event',
-        'url',
-        'payload',
-    ];
+    public function __construct(
+        string $file,
+        ?Throwable $previous = null,
+    ) {
+        $this->file = $file;
 
-    protected $casts = [
-        'source' => InboundWebhookSource::class,
-    ];
+        parent::__construct(
+            message: 'Unable to retrieve content from SES S3 email payload.',
+            previous: $previous,
+        );
+    }
 
-    protected function serializeDate(DateTimeInterface $date): string
+    /**
+     * Get the exception's context information.
+     *
+     * @return array<string, mixed>
+     */
+    public function context(): array
     {
-        return $date->format(config('project.datetime_format') ?? 'Y-m-d H:i:s');
+        return [
+            'file' => $this->file,
+        ];
     }
 }

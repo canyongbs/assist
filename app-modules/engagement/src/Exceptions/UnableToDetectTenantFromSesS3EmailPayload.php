@@ -34,35 +34,27 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Webhook\Models;
+namespace AdvisingApp\Engagement\Exceptions;
 
-use AdvisingApp\Webhook\Enums\InboundWebhookSource;
-use DateTimeInterface;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Model;
-use Spatie\Multitenancy\Models\Concerns\UsesLandlordConnection;
+use Exception;
 
-/**
- * @mixin IdeHelperLandlordInboundWebhook
- */
-class LandlordInboundWebhook extends Model
+class UnableToDetectTenantFromSesS3EmailPayload extends Exception
 {
-    use HasUuids;
-    use UsesLandlordConnection;
+    public function __construct(
+        protected string $file,
+    ) {
+        parent::__construct(message: 'Unable to detect tenant from SES S3 email payload.');
+    }
 
-    protected $fillable = [
-        'source',
-        'event',
-        'url',
-        'payload',
-    ];
-
-    protected $casts = [
-        'source' => InboundWebhookSource::class,
-    ];
-
-    protected function serializeDate(DateTimeInterface $date): string
+    /**
+     * Get the exception's context information.
+     *
+     * @return array<string, mixed>
+     */
+    public function context(): array
     {
-        return $date->format(config('project.datetime_format') ?? 'Y-m-d H:i:s');
+        return [
+            'file' => $this->file,
+        ];
     }
 }

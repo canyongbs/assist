@@ -85,6 +85,7 @@
         "mll-lab/graphql-php-scalars": "^6.2",
         "nuwave/lighthouse": "^6.42",
         "owen-it/laravel-auditing": "^13.6",
+        "php-mime-mail-parser/php-mime-mail-parser": "^9.0",
         "saade/filament-fullcalendar": "^3.2",
         "sentry/sentry-laravel": "^4.7",
         "shuvroroy/filament-spatie-laravel-health": "^2.1.0",

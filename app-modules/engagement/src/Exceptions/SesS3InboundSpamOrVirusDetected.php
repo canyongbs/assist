@@ -34,35 +34,31 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Webhook\Models;
+namespace AdvisingApp\Engagement\Exceptions;
 
-use AdvisingApp\Webhook\Enums\InboundWebhookSource;
-use DateTimeInterface;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Model;
-use Spatie\Multitenancy\Models\Concerns\UsesLandlordConnection;
+use Exception;
 
-/**
- * @mixin IdeHelperLandlordInboundWebhook
- */
-class LandlordInboundWebhook extends Model
+class SesS3InboundSpamOrVirusDetected extends Exception
 {
-    use HasUuids;
-    use UsesLandlordConnection;
+    public function __construct(
+        protected string $file,
+        protected string $spamVerdict,
+        protected string $virusVerdict,
+    ) {
+        parent::__construct('An inbound email was detected as spam or containing a virus.');
+    }
 
-    protected $fillable = [
-        'source',
-        'event',
-        'url',
-        'payload',
-    ];
-
-    protected $casts = [
-        'source' => InboundWebhookSource::class,
-    ];
-
-    protected function serializeDate(DateTimeInterface $date): string
+    /**
+     * Get the exception's context information.
+     *
+     * @return array<string, mixed>
+     */
+    public function context(): array
     {
-        return $date->format(config('project.datetime_format') ?? 'Y-m-d H:i:s');
+        return [
+            'file' => $this->file,
+            'spam_verdict' => $this->spamVerdict,
+            'virus_verdict' => $this->virusVerdict,
+        ];
     }
 }

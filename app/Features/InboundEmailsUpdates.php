@@ -34,35 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Webhook\Models;
+namespace App\Features;
 
-use AdvisingApp\Webhook\Enums\InboundWebhookSource;
-use DateTimeInterface;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Model;
-use Spatie\Multitenancy\Models\Concerns\UsesLandlordConnection;
+use App\Support\AbstractFeatureFlag;
 
-/**
- * @mixin IdeHelperLandlordInboundWebhook
- */
-class LandlordInboundWebhook extends Model
+class InboundEmailsUpdates extends AbstractFeatureFlag
 {
-    use HasUuids;
-    use UsesLandlordConnection;
-
-    protected $fillable = [
-        'source',
-        'event',
-        'url',
-        'payload',
-    ];
-
-    protected $casts = [
-        'source' => InboundWebhookSource::class,
-    ];
-
-    protected function serializeDate(DateTimeInterface $date): string
+    public function resolve(mixed $scope): mixed
     {
-        return $date->format(config('project.datetime_format') ?? 'Y-m-d H:i:s');
+        return false;
     }
 }
