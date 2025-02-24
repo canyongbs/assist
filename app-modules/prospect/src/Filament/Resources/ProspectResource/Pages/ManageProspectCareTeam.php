@@ -84,7 +84,7 @@ class ManageProspectCareTeam extends ManageRelatedRecords
             ])
             ->headerActions([
                 AttachAction::make()
-                    ->label('Add to Care Team')
+                    ->label('New')
                     ->modalHeading(function () {
                         /** @var Prospect $prospect */
                         $prospect = $this->getOwnerRecord();

@@ -72,7 +72,7 @@ class RelationManagerSendEngagementAction extends CreateAction
         parent::setUp();
 
         $this->icon('heroicon-m-chat-bubble-bottom-center-text')
-            ->label('New Email or Text')
+            ->label('New')
             ->modalHeading('Create new email or text')
             ->model(Engagement::class)
             ->authorize(function (RelationManager $livewire) {

@@ -49,7 +49,7 @@
                                 icon="heroicon-m-plus"
                                 wire:click="createThread"
                             >
-                                New chat
+                                New Chat
                             </x-filament::button>
 
                             {{ $this->newFolderAction }}

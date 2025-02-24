@@ -85,8 +85,7 @@ class ListAiAssistants extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make()
-                ->label('Create AI Assistant'),
+            CreateAction::make(),
         ];
     }
 }

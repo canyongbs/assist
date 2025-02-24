@@ -87,6 +87,7 @@ class CampaignActionsRelationManager extends RelationManager
             ])
             ->headerActions([
                 Action::make('create')
+                    ->label('New')
                     ->modalHeading('Create campaign actions')
                     ->form([
                         Builder::make('data')

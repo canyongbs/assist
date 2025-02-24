@@ -80,7 +80,7 @@ class AssignedToRelationManager extends RelationManager
             ->paginated(false)
             ->headerActions([
                 Action::make('reassign-service-request')
-                    ->label('Reassign Case')
+                    ->label('Reassign')
                     ->color('gray')
                     ->action(fn (array $data) => $this->getOwnerRecord()->assignments()->create([
                         'user_id' => $data['userId'],

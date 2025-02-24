@@ -144,8 +144,7 @@ class ListAudits extends ListRecords
             ->bulkActions([
                 BulkActionGroup::make([
                     ExportBulkAction::make()
-                        ->exporter(AuditExporter::class)
-                        ->label('Export Records'),
+                        ->exporter(AuditExporter::class),
                 ]),
             ]);
     }
@@ -154,8 +153,7 @@ class ListAudits extends ListRecords
     {
         return [
             ExportAction::make()
-                ->exporter(AuditExporter::class)
-                ->label('Export Records'),
+                ->exporter(AuditExporter::class),
         ];
     }
 }

@@ -85,7 +85,7 @@ class ManageProspectSubscriptions extends ManageRelatedRecords
             ])
             ->headerActions([
                 AttachAction::make()
-                    ->label('Create Subscription')
+                    ->label('New')
                     ->modalHeading(function () {
                         /** @var Prospect $prospect */
                         $prospect = $this->getOwnerRecord();

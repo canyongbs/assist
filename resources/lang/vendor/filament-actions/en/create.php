@@ -34,50 +34,28 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages;
+return [
+    'single' => [
+        'label' => 'New',
 
-use AdvisingApp\MeetingCenter\Filament\Resources\EventResource;
-use AdvisingApp\MeetingCenter\Models\Event;
-use Filament\Actions\Action;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\EditAction;
-use Filament\Infolists\Components\Section;
-use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
-use Filament\Resources\Pages\ViewRecord;
+        'modal' => [
+            'heading' => 'Create :label',
 
-class ViewEvent extends ViewRecord
-{
-    protected static string $resource = EventResource::class;
+            'actions' => [
+                'create' => [
+                    'label' => 'Create',
+                ],
 
-    protected static ?string $navigationLabel = 'View';
+                'create_another' => [
+                    'label' => 'Create & create another',
+                ],
+            ],
+        ],
 
-    public function infolist(Infolist $infolist): Infolist
-    {
-        return $infolist
-            ->schema([
-                Section::make()
-                    ->schema([
-                        TextEntry::make('title'),
-                        TextEntry::make('description'),
-                        TextEntry::make('location'),
-                        TextEntry::make('capacity'),
-                        TextEntry::make('starts_at'),
-                        TextEntry::make('ends_at'),
-                    ])
-                    ->columns(),
-            ]);
-    }
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            Action::make('view')
-                ->url(fn (Event $event) => route('event-registration.show', ['event' => $event]))
-                ->icon('heroicon-m-arrow-top-right-on-square')
-                ->openUrlInNewTab(),
-            EditAction::make(),
-            DeleteAction::make(),
-        ];
-    }
-}
+        'notifications' => [
+            'created' => [
+                'title' => 'Created',
+            ],
+        ],
+    ],
+];

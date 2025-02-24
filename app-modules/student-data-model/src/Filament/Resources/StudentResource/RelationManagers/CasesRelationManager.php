@@ -99,7 +99,6 @@ class CasesRelationManager extends RelationManager
             ])
             ->headerActions([
                 CreateAction::make()
-                    ->label('New Case')
                     ->modalHeading('Create new case'),
             ])
             ->actions([

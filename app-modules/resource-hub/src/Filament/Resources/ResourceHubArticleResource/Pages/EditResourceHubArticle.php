@@ -114,7 +114,7 @@ class EditResourceHubArticle extends EditRecord
     protected function getFormActions(): array
     {
         return [
-            $this->getSubmitFormAction()->label('Save Article Details'),
+            $this->getSubmitFormAction()->label('Save'),
         ];
     }
 
@@ -125,9 +125,9 @@ class EditResourceHubArticle extends EditRecord
                 ->action('save')
                 ->button()
                 ->color('primary')
-                ->label('Save Article Details'),
+                ->label('Save'),
             EditAction::make()
-                ->label('Edit Article Properties')
+                ->label('Edit Properties')
                 ->button()
                 ->outlined()
                 ->record($this->record)

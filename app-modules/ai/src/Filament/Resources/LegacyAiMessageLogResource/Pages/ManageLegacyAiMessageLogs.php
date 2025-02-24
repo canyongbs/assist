@@ -38,7 +38,7 @@ namespace AdvisingApp\Ai\Filament\Resources\LegacyAiMessageLogResource\Pages;
 
 use AdvisingApp\Ai\Filament\Exports\LegacyAiMessageExporter;
 use AdvisingApp\Ai\Filament\Resources\LegacyAiMessageLogResource;
-use Filament\Actions;
+use Filament\Actions\ExportAction;
 use Filament\Resources\Pages\ManageRecords;
 
 class ManageLegacyAiMessageLogs extends ManageRecords
@@ -50,9 +50,8 @@ class ManageLegacyAiMessageLogs extends ManageRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\ExportAction::make()
-                ->exporter(LegacyAiMessageExporter::class)
-                ->label('Export Records'),
+            ExportAction::make()
+                ->exporter(LegacyAiMessageExporter::class),
         ];
     }
 }

@@ -63,6 +63,8 @@ class EditCase extends EditRecord
 
     protected static string $resource = CaseResource::class;
 
+    protected static ?string $navigationLabel = 'Edit';
+
     public function form(Form $form): Form
     {
         $disabledStatuses = CaseStatus::onlyTrashed()->pluck('id');
