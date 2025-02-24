@@ -56,7 +56,7 @@ class StudentsStats extends StatsOverviewReportWidget
     protected function getStats(): array
     {
         return [
-            Stat::make('Total Students', Number::abbreviate(
+            Stat::make('Total Students', Number::format(
                 Cache::tags([$this->cacheTag])->remember('total-students-count', now()->addHours(24), function (): int {
                     return Student::count();
                 }),

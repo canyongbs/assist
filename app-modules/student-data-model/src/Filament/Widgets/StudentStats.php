@@ -53,7 +53,7 @@ class StudentStats extends StatsOverviewWidget
         $user = auth()->user();
 
         return [
-            Stat::make('Students', Number::abbreviate(
+            Stat::make('Students', Number::format(
                 Cache::tags(['students'])
                     ->remember('students-count', now()->addHour(), function (): int {
                         return Student::count();
