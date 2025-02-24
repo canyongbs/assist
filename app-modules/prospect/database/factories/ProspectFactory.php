@@ -37,6 +37,9 @@
 namespace AdvisingApp\Prospect\Database\Factories;
 
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Prospect\Models\ProspectAddress;
+use AdvisingApp\Prospect\Models\ProspectEmailAddress;
+use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
 use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
 use App\Models\User;
@@ -61,21 +64,30 @@ class ProspectFactory extends Factory
             'full_name' => "{$firstName} {$lastName}",
             'preferred' => fake()->firstName(),
             'description' => fake()->paragraph(),
-            'email' => fake()->unique()->email(),
-            'email_2' => fake()->email(),
-            'mobile' => fake()->phoneNumber(),
             'sms_opt_out' => fake()->boolean(),
             'email_bounce' => fake()->boolean(),
-            'phone' => fake()->phoneNumber(),
-            'address' => fake()->streetAddress(),
-            'address_2' => fake()->secondaryAddress(),
-            'address_3' => $address3 ? str($address3)->headline()->toString() : null,
-            'city' => fake()->city(),
-            'state' => fake()->stateAbbr(),
-            'postal' => str(fake()->postcode())->before('-')->toString(),
             'birthdate' => fake()->date(),
             'hsgrad' => fake()->year(),
             'created_by_id' => User::factory(),
         ];
+    }
+
+    public function configure(): static
+    {
+        return $this->afterCreating(function (Prospect $prospect) {
+            $prospect->primaryEmail()->associate(ProspectEmailAddress::factory()->create(['prospect_id' => $prospect->getKey(), 'address' => fake()->unique()->email()]));
+            $prospect->primaryPhone()->associate(ProspectPhoneNumber::factory()->create(['prospect_id' => $prospect->getKey(), 'number' => fake()->numerify('+1 ### ### ####')]));
+            $prospect->primaryAddress()->associate(ProspectAddress::factory()->create([
+                'prospect_id' => $prospect->getKey(),
+                'line_1' => fake()->streetAddress(),
+                'line_2' => fake()->secondaryAddress(),
+                'line_3' => fake()->optional()->words(asText: true) ?? null,
+                'city' => fake()->city(),
+                'state' => fake()->stateAbbr(),
+                'postal' => str(fake()->postcode())->before('-')->toString(),
+            ]));
+
+            $prospect->save();
+        });
     }
 }

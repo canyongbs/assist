@@ -34,27 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Actions;
+namespace App\Features;
 
-use AdvisingApp\Form\Notifications\FormSubmissionRequestSmsNotification;
-use App\Features\ProspectStudentRefactor;
+use App\Support\AbstractFeatureFlag;
 
-class DeliverFormSubmissionRequestBySms extends DeliverFormSubmissionRequest
+class ProspectStudentRefactor extends AbstractFeatureFlag
 {
-    public function handle(): void
+    public function resolve(mixed $scope): mixed
     {
-        if (ProspectStudentRefactor::active()) {
-            if ($this->submission->author->primaryPhone) {
-                $this
-                    ->submission
-                    ->author
-                    ->notify(new FormSubmissionRequestSmsNotification($this->submission));
-            }
-        } else {
-            $this
-                ->submission
-                ->author
-                ->notify(new FormSubmissionRequestSmsNotification($this->submission));
-        }
+        return false;
     }
 }

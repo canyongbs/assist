@@ -39,6 +39,9 @@ namespace AdvisingApp\StudentDataModel\Providers;
 use AdvisingApp\StudentDataModel\Models\Enrollment;
 use AdvisingApp\StudentDataModel\Models\Program;
 use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\StudentDataModel\Models\StudentAddress;
+use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
+use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
 use AdvisingApp\StudentDataModel\StudentDataModelPlugin;
 use App\Concerns\ImplementsGraphQL;
 use Filament\Panel;
@@ -60,6 +63,9 @@ class StudentDataModelServiceProvider extends ServiceProvider
             'student' => Student::class,
             'enrollment' => Enrollment::class,
             'program' => Program::class,
+            'student_phone_number' => StudentPhoneNumber::class,
+            'student_address' => StudentAddress::class,
+            'student_email_address' => StudentEmailAddress::class,
         ]);
 
         $this->discoverSchema(__DIR__ . '/../../graphql/*');

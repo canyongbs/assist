@@ -44,6 +44,7 @@ use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Actions\ProspectTag
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ViewProspect;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
+use App\Features\ProspectStudentRefactor;
 use App\Settings\DisplaySettings;
 use Filament\Actions\EditAction;
 use Illuminate\Contracts\View\View;
@@ -55,6 +56,7 @@ trait HasProspectHeader
         $sisSettings = app(StudentInformationSystemSettings::class);
 
         $prospect = $this->getRecord();
+
         $prospectName = filled($prospect->full_name)
             ? $prospect->full_name
             : "{$prospect->first_name} {$prospect->last_name}";
@@ -75,8 +77,16 @@ trait HasProspectHeader
             'details' => [
                 ['Prospect', 'heroicon-m-magnifying-glass-circle'],
                 ...(filled($prospect->preferred) ? [["Goes by \"{$prospect->preferred}\"", 'heroicon-m-heart']] : []),
-                ...(filled($prospect->phone) ? [[$prospect->phone, 'heroicon-m-phone']] : []),
-                ...(filled($prospect->email) ? [[$prospect->email, 'heroicon-m-envelope']] : []),
+                ...(
+                    ProspectStudentRefactor::active()
+                      ? (filled($prospect->primaryPhone) ? [[$prospect->primaryPhone->number, 'heroicon-m-phone']] : [])
+                      : (filled($prospect->phone) ? [[$prospect->phone, 'heroicon-m-phone']] : [])
+                ),
+                ...(
+                    ProspectStudentRefactor::active()
+                    ? (filled($prospect->primaryEmail) ? [[$prospect->primaryEmail->address, 'heroicon-m-envelope']] : [])
+                    : (filled($prospect->email) ? [[$prospect->email, 'heroicon-m-envelope']] : [])
+                ),
                 ...(filled($prospect->hsgrad) ? [[$prospect->hsgrad, 'heroicon-m-building-library']] : []),
             ],
             'hasSisSystem' => $sisSettings->is_enabled && $sisSettings->sis_system,

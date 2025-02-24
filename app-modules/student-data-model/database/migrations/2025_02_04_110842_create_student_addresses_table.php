@@ -34,27 +34,34 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Actions;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-use AdvisingApp\Form\Notifications\FormSubmissionRequestSmsNotification;
-use App\Features\ProspectStudentRefactor;
-
-class DeliverFormSubmissionRequestBySms extends DeliverFormSubmissionRequest
-{
-    public function handle(): void
+return new class () extends Migration {
+    public function up(): void
     {
-        if (ProspectStudentRefactor::active()) {
-            if ($this->submission->author->primaryPhone) {
-                $this
-                    ->submission
-                    ->author
-                    ->notify(new FormSubmissionRequestSmsNotification($this->submission));
-            }
-        } else {
-            $this
-                ->submission
-                ->author
-                ->notify(new FormSubmissionRequestSmsNotification($this->submission));
-        }
+        Schema::create('student_addresses', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->string('sisid');
+            $table->string('line_1')->nullable();
+            $table->string('line_2')->nullable();
+            $table->string('line_3')->nullable();
+            $table->string('city')->nullable();
+            $table->string('state')->nullable();
+            $table->string('postal')->nullable();
+            $table->string('country')->nullable();
+            $table->string('type')->nullable();
+            $table->integer('order');
+            $table->timestamps();
+            $table->foreign('sisid')->references('sisid')->on('students')->onDelete('cascade');
+
+            $table->index(['sisid', 'order']);
+        });
     }
-}
+
+    public function down(): void
+    {
+        Schema::dropIfExists('student_addresses');
+    }
+};

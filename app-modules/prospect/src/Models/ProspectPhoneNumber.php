@@ -34,27 +34,35 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Actions;
+namespace AdvisingApp\Prospect\Models;
 
-use AdvisingApp\Form\Notifications\FormSubmissionRequestSmsNotification;
-use App\Features\ProspectStudentRefactor;
+use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class DeliverFormSubmissionRequestBySms extends DeliverFormSubmissionRequest
+/**
+ * @mixin IdeHelperProspectPhoneNumber
+ */
+class ProspectPhoneNumber extends BaseModel implements Auditable
 {
-    public function handle(): void
+    use AuditableTrait;
+
+    protected $fillable = [
+        'prospect_id',
+        'number',
+        'ext',
+        'type',
+        'is_mobile',
+        'order',
+    ];
+
+    protected $casts = [
+        'is_mobile' => 'boolean',
+    ];
+
+    public function prospect(): BelongsTo
     {
-        if (ProspectStudentRefactor::active()) {
-            if ($this->submission->author->primaryPhone) {
-                $this
-                    ->submission
-                    ->author
-                    ->notify(new FormSubmissionRequestSmsNotification($this->submission));
-            }
-        } else {
-            $this
-                ->submission
-                ->author
-                ->notify(new FormSubmissionRequestSmsNotification($this->submission));
-        }
+        return $this->belongsTo(Prospect::class);
     }
 }

@@ -43,6 +43,7 @@ use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Actions\Stud
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Actions\SyncStudentSisAction;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ViewStudent;
 use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
+use App\Features\ProspectStudentRefactor;
 use App\Settings\DisplaySettings;
 use Filament\Actions\DeleteAction;
 use Illuminate\Contracts\View\View;
@@ -74,8 +75,16 @@ trait HasStudentHeader
             'details' => [
                 ['Student', 'heroicon-m-user'],
                 ...(filled($student->preferred) ? [["Goes by \"{$student->preferred}\"", 'heroicon-m-heart']] : []),
-                ...(filled($student->phone) ? [[$student->phone, 'heroicon-m-phone']] : []),
-                ...(filled($student->email) ? [[$student->email, 'heroicon-m-envelope']] : []),
+                ...(
+                    ProspectStudentRefactor::active()
+                ? (filled($student->primaryPhone) ? [[$student->primaryPhone->number, 'heroicon-m-phone']] : [])
+                : (filled($student->phone) ? [[$student->phone, 'heroicon-m-phone']] : [])
+                ),
+                ...(
+                    ProspectStudentRefactor::active()
+                    ? (filled($student->primaryEmail) ? [[$student->primaryEmail->address, 'heroicon-m-envelope']] : [])
+                    : (filled($student->email) ? [[$student->email, 'heroicon-m-envelope']] : [])
+                ),
                 ...(filled($student->sisid) ? [[$student->sisid, 'heroicon-m-identification']] : []),
             ],
             'hasSisSystem' => $sisSettings->is_enabled && $sisSettings->sis_system,

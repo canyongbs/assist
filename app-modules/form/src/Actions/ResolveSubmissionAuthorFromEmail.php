@@ -38,6 +38,8 @@ namespace AdvisingApp\Form\Actions;
 
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Features\ProspectStudentRefactor;
+use Illuminate\Database\Eloquent\Builder;
 
 class ResolveSubmissionAuthorFromEmail
 {
@@ -48,20 +50,36 @@ class ResolveSubmissionAuthorFromEmail
         }
 
         /** @var Student $student */
-        $student = Student::query()
-            ->where('email', $email)
-            ->orWhere('email_2', $email)
-            ->first();
+        if (ProspectStudentRefactor::active()) {
+            $student = Student::query()
+                ->whereHas('emailAddresses', function (Builder $query) use ($email) {
+                    return $query->where('address', $email);
+                })
+                ->first();
+        } else {
+            $student = Student::query()
+                ->where('email', $email)
+                ->orWhere('email_2', $email)
+                ->first();
+        }
 
         if ($student) {
             return $student;
         }
 
         /** @var Prospect $prospect */
-        $prospect = Prospect::query()
-            ->where('email', $email)
-            ->orWhere('email_2', $email)
-            ->first();
+        if (ProspectStudentRefactor::active()) {
+            $prospect = Prospect::query()
+                ->whereHas('emailAddresses', function (Builder $query) use ($email) {
+                    return $query->where('address', $email);
+                })
+                ->first();
+        } else {
+            $prospect = Prospect::query()
+                ->where('email', $email)
+                ->orWhere('email_2', $email)
+                ->first();
+        }
 
         if ($prospect) {
             return $prospect;

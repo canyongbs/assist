@@ -34,27 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Actions;
-
-use AdvisingApp\Form\Notifications\FormSubmissionRequestSmsNotification;
 use App\Features\ProspectStudentRefactor;
+use Illuminate\Database\Migrations\Migration;
 
-class DeliverFormSubmissionRequestBySms extends DeliverFormSubmissionRequest
-{
-    public function handle(): void
+return new class () extends Migration {
+    public function up(): void
     {
-        if (ProspectStudentRefactor::active()) {
-            if ($this->submission->author->primaryPhone) {
-                $this
-                    ->submission
-                    ->author
-                    ->notify(new FormSubmissionRequestSmsNotification($this->submission));
-            }
-        } else {
-            $this
-                ->submission
-                ->author
-                ->notify(new FormSubmissionRequestSmsNotification($this->submission));
-        }
+        ProspectStudentRefactor::activate();
     }
-}
+
+    public function down(): void
+    {
+        ProspectStudentRefactor::deactivate();
+    }
+};

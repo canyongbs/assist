@@ -34,27 +34,39 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Actions;
+namespace AdvisingApp\StudentDataModel\Database\Factories;
 
-use AdvisingApp\Form\Notifications\FormSubmissionRequestSmsNotification;
-use App\Features\ProspectStudentRefactor;
+use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-class DeliverFormSubmissionRequestBySms extends DeliverFormSubmissionRequest
+/**
+ * @extends Factory<StudentEmailAddress>
+ */
+class StudentEmailAddressFactory extends Factory
 {
-    public function handle(): void
+    private int $maxOrder;
+
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition(): array
     {
-        if (ProspectStudentRefactor::active()) {
-            if ($this->submission->author->primaryPhone) {
-                $this
-                    ->submission
-                    ->author
-                    ->notify(new FormSubmissionRequestSmsNotification($this->submission));
-            }
-        } else {
-            $this
-                ->submission
-                ->author
-                ->notify(new FormSubmissionRequestSmsNotification($this->submission));
-        }
+        return [
+            'address' => fake()->email(),
+            'type' => fake()->randomElement(['School', 'Personal', 'Work']),
+            'order' => $this->getNewOrder(),
+        ];
+    }
+
+    public function getNewOrder(): int
+    {
+        return $this->maxOrder = $this->getMaxOrder() + 1;
+    }
+
+    public function getMaxOrder(): int
+    {
+        return $this->maxOrder ??= StudentEmailAddress::max('order') ?? 0;
     }
 }

@@ -34,27 +34,68 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Actions;
+namespace AdvisingApp\StudentDataModel\Database\Factories;
 
-use AdvisingApp\Form\Notifications\FormSubmissionRequestSmsNotification;
-use App\Features\ProspectStudentRefactor;
+use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-class DeliverFormSubmissionRequestBySms extends DeliverFormSubmissionRequest
+/**
+ * @extends Factory<StudentPhoneNumber>
+ */
+class StudentPhoneNumberFactory extends Factory
 {
-    public function handle(): void
+    private int $maxOrder;
+
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition(): array
     {
-        if (ProspectStudentRefactor::active()) {
-            if ($this->submission->author->primaryPhone) {
-                $this
-                    ->submission
-                    ->author
-                    ->notify(new FormSubmissionRequestSmsNotification($this->submission));
-            }
-        } else {
-            $this
-                ->submission
-                ->author
-                ->notify(new FormSubmissionRequestSmsNotification($this->submission));
-        }
+        return [
+            'number' => fake()->phoneNumber(),
+            'ext' => null,
+            'type' => fake()->randomElement(['Home', 'Mobile', 'Work']),
+            'can_recieve_sms' => fake()->boolean(),
+            'order' => $this->getNewOrder(),
+        ];
+    }
+
+    public function canNotRecieveSms(): Factory
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'can_recieve_sms' => false,
+            ];
+        });
+    }
+
+    public function canRecieveSms(): Factory
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'can_recieve_sms' => true,
+            ];
+        });
+    }
+
+    public function withExtension(): Factory
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'ext' => fake()->randomNumber(),
+            ];
+        });
+    }
+
+    public function getNewOrder(): int
+    {
+        return $this->maxOrder = $this->getMaxOrder() + 1;
+    }
+
+    public function getMaxOrder(): int
+    {
+        return $this->maxOrder ??= StudentPhoneNumber::max('order') ?? 0;
     }
 }

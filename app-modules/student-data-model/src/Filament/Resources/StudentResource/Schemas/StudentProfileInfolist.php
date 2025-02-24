@@ -37,6 +37,7 @@
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Schemas;
 
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Actions\EditStudentAction;
+use App\Features\ProspectStudentRefactor;
 use App\Infolists\Components\Subsection;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
@@ -55,10 +56,26 @@ class StudentProfileInfolist
                                 ->label('Tags')
                                 ->badge()
                                 ->placeholder('-'),
+                            TextEntry::make('phone')
+                                ->visible(! ProspectStudentRefactor::active())
+                                ->placeholder('-'),
+                            TextEntry::make('phoneNumbers.number')
+                                ->label('Phone')
+                                ->listWithLineBreaks()
+                                ->limitList(3)
+                                ->expandableLimitedList()
+                                ->visible(ProspectStudentRefactor::active())
+                                ->placeholder('-'),
                             TextEntry::make('email_2')
                                 ->label('Alternate Email')
+                                ->visible(! ProspectStudentRefactor::active())
                                 ->placeholder('-'),
-                            TextEntry::make('phone')
+                            TextEntry::make('emailAddresses.address')
+                                ->label('Alternate Email')
+                                ->listWithLineBreaks()
+                                ->limitList(3)
+                                ->expandableLimitedList()
+                                ->visible(ProspectStudentRefactor::active())
                                 ->placeholder('-'),
                             TextEntry::make('full_address')
                                 ->label('Address')

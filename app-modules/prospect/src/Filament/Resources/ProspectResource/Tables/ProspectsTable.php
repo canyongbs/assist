@@ -38,6 +38,7 @@ namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Tables;
 
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
+use App\Features\ProspectStudentRefactor;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Enums\FiltersLayout;
@@ -61,10 +62,14 @@ class ProspectsTable
                     ->sortable(),
                 TextColumn::make('email')
                     ->label('Email')
+                    ->visible(! ProspectStudentRefactor::active())
                     ->sortable(),
                 TextColumn::make('mobile')
                     ->label('Mobile')
+                    ->visible(! ProspectStudentRefactor::active())
                     ->sortable(),
+                TextColumn::make('primaryEmail.address')->sortable()->label('Email')->visible(ProspectStudentRefactor::active()),
+                TextColumn::make('primaryPhone.number')->sortable()->label('Mobile')->visible(ProspectStudentRefactor::active()),
                 TextColumn::make('status')
                     ->badge()
                     ->state(function (Prospect $record) {
@@ -100,18 +105,39 @@ class ProspectsTable
                             ->icon('heroicon-m-user'),
                         QueryBuilder\Constraints\DateConstraint::make('created_at')
                             ->icon('heroicon-m-calendar'),
-                        TextConstraint::make('email')
-                            ->label('Email Address')
-                            ->icon('heroicon-m-envelope'),
-                        TextConstraint::make('email_2')
-                            ->label('Email Address 2')
-                            ->icon('heroicon-m-envelope'),
-                        TextConstraint::make('mobile')
-                            ->icon('heroicon-m-phone'),
-                        TextConstraint::make('phone')
-                            ->icon('heroicon-m-phone'),
-                        TextConstraint::make('address')
-                            ->icon('heroicon-m-map-pin'),
+                        ...(
+                            ProspectStudentRefactor::active()
+                            ?
+                            [
+                                TextConstraint::make('primary_email_id')
+                                    ->label('Email Address')
+                                    ->relationship('primaryEmail', 'address')
+                                    ->icon('heroicon-m-envelope'),
+                                TextConstraint::make('primary_phone_id')
+                                    ->label('Mobile')
+                                    ->relationship('primaryPhone', 'number')
+                                    ->icon('heroicon-m-phone'),
+                                TextConstraint::make('primary_address_id')
+                                    ->label('Address')
+                                    ->relationship('primaryAddress', 'line_1')
+                                    ->icon('heroicon-m-map-pin'),
+                            ]
+                            :
+                            [
+                                TextConstraint::make('email')
+                                    ->label('Email Address')
+                                    ->icon('heroicon-m-envelope'),
+                                TextConstraint::make('email_2')
+                                    ->label('Email Address 2')
+                                    ->icon('heroicon-m-envelope'),
+                                TextConstraint::make('mobile')
+                                    ->icon('heroicon-m-phone'),
+                                TextConstraint::make('phone')
+                                    ->icon('heroicon-m-phone'),
+                                TextConstraint::make('address')
+                                    ->icon('heroicon-m-map-pin'),
+                            ]
+                        ),
                         RelationshipConstraint::make('tags')
                             ->label('Tags')
                             ->icon('heroicon-m-rectangle-group')
@@ -121,8 +147,21 @@ class ProspectsTable
                                     ->multiple()
                                     ->preload(),
                             ),
-                        TextConstraint::make('address_2')
-                            ->icon('heroicon-m-map-pin'),
+                        ...(
+                            ProspectStudentRefactor::active()
+                            ?
+                            [
+                                TextConstraint::make('address_2')
+                                    ->icon('heroicon-m-map-pin'),
+                            ]
+                            :
+                            [
+                                TextConstraint::make('address_2')
+                                    ->label('Address 2')
+                                    ->relationship('primaryAddress', 'line_2')
+                                    ->icon('heroicon-m-map-pin'),
+                            ]
+                        ),
                         BooleanConstraint::make('sms_opt_out')
                             ->label('SMS Opt Out')
                             ->icon('heroicon-m-chat-bubble-bottom-center'),
