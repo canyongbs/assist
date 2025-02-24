@@ -63,11 +63,11 @@ class CaseObserver
         }
 
         if ($case->status->classification === SystemCaseClassification::Open) {
-            if(ProspectStudentRefactor::active()){
+            if (ProspectStudentRefactor::active()) {
                 if ($case->respondent->primaryEmail) {
                     $case->respondent->notify(new EducatableCaseOpenedNotification($case));
                 }
-            }else{
+            } else {
                 $case->respondent->notify(new EducatableCaseOpenedNotification($case));
             }
         }

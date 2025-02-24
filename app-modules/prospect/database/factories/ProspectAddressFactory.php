@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Prospect\Database\Factories;
 
-use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectAddress;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
