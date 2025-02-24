@@ -31,7 +31,7 @@
 
 </COPYRIGHT>
 --}}
-@props(['managers','preventLazyLoading' => []])
+@props(['managers', 'preventLazyLoading' => []])
 
 @php
     use Illuminate\Support\Js;

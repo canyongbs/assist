@@ -82,7 +82,7 @@ class RelationManagerSendEngagementAction extends CreateAction
                 return auth()->user()->can('create', [Engagement::class, $ownerRecord instanceof Prospect ? $ownerRecord : null]);
             })
             ->fillForm(function (RelationManagerSendEngagementAction $action) {
-                if(ProspectStudentRefactor::active()) {
+                if (ProspectStudentRefactor::active()) {
                     return [
                         'channel' => $action->getArguments()['type'] ?? NotificationChannel::Email->value,
                         'email' => $action->getArguments()['id'] ?? null,
@@ -109,7 +109,7 @@ class RelationManagerSendEngagementAction extends CreateAction
                                 return $livewire->getOwnerRecord()->emailAddresses()->limit(10)->pluck('address', 'id')->toArray();
                             })
                             ->preload()
-                            ->getSearchResultsUsing(fn (RelationManager $livewire,string $search): array => $livewire->getOwnerRecord()->emailAddresses()->where('address', 'like', "%{$search}%")->limit(50)->pluck('address', 'id')->toArray())
+                            ->getSearchResultsUsing(fn (RelationManager $livewire, string $search): array => $livewire->getOwnerRecord()->emailAddresses()->where('address', 'like', "%{$search}%")->limit(50)->pluck('address', 'id')->toArray())
                             ->visible(fn (Get $get) => ProspectStudentRefactor::active() && $get('channel') === NotificationChannel::Email->value)
                             ->columnSpanFull()
                             ->searchable(),
@@ -119,7 +119,7 @@ class RelationManagerSendEngagementAction extends CreateAction
                             })
                             ->visible()
                             ->preload()
-                            ->getSearchResultsUsing(fn (RelationManager $livewire,string $search): array => $livewire->getOwnerRecord()->phoneNumbers()->where('number', 'like', "%{$search}%")->limit(50)->pluck('number', 'id')->toArray())
+                            ->getSearchResultsUsing(fn (RelationManager $livewire, string $search): array => $livewire->getOwnerRecord()->phoneNumbers()->where('number', 'like', "%{$search}%")->limit(50)->pluck('number', 'id')->toArray())
                             ->visible(fn (Get $get) => ProspectStudentRefactor::active() && $get('channel') === NotificationChannel::Sms->value)
                             ->columnSpanFull()
                             ->searchable(),

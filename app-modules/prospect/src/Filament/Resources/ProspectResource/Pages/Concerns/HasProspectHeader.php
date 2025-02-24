@@ -76,11 +76,11 @@ trait HasProspectHeader
             ],
             'breadcrumbs' => $this->getBreadcrumbs(),
             'details' => [
-                ['Prospect', 'heroicon-m-magnifying-glass-circle',null],
-                ...(filled($prospect->preferred) ? [["Goes by \"{$prospect->preferred}\"", 'heroicon-m-heart',null]] : []),
+                ['Prospect', 'heroicon-m-magnifying-glass-circle', null],
+                ...(filled($prospect->preferred) ? [["Goes by \"{$prospect->preferred}\"", 'heroicon-m-heart', null]] : []),
                 ...(
-                  ProspectStudentRefactor::active()
-                ? (filled($prospect->primaryPhone) ? [[$prospect->primaryPhone->number, 'heroicon-m-phone', !NotificationChannel::tryFrom(NotificationChannel::Sms->value)?->getCaseDisabled() && $prospect->primaryPhone->can_recieve_sms ? "\$dispatch('openengagementaction', { 'type' : '" . NotificationChannel::Sms->value . "', 'id' : '{$prospect?->primaryPhone->getKey()}' })" : null]] : [])
+                    ProspectStudentRefactor::active()
+                ? (filled($prospect->primaryPhone) ? [[$prospect->primaryPhone->number, 'heroicon-m-phone', ! NotificationChannel::tryFrom(NotificationChannel::Sms->value)?->getCaseDisabled() && $prospect->primaryPhone->can_recieve_sms ? "\$dispatch('openengagementaction', { 'type' : '" . NotificationChannel::Sms->value . "', 'id' : '{$prospect?->primaryPhone->getKey()}' })" : null]] : [])
                 : (filled($prospect->phone) ? [[$prospect->phone, 'heroicon-m-phone', null]] : [])
                 ),
                 ...(
@@ -88,7 +88,7 @@ trait HasProspectHeader
                     ? (filled($prospect->primaryEmail) ? [[$prospect->primaryEmail->address, 'heroicon-m-envelope', "\$dispatch('openengagementaction', { 'type' : '" . NotificationChannel::Email->value . "', 'id': '{$prospect->primaryEmail->getKey()}' })"]] : [])
                     : (filled($prospect->email) ? [[$prospect->email, 'heroicon-m-envelope', null]] : [])
                 ),
-                ...(filled($prospect->hsgrad) ? [[$prospect->hsgrad, 'heroicon-m-building-library',null]] : []),
+                ...(filled($prospect->hsgrad) ? [[$prospect->hsgrad, 'heroicon-m-building-library', null]] : []),
             ],
             'hasSisSystem' => $sisSettings->is_enabled && $sisSettings->sis_system,
             'educatable' => $prospect,

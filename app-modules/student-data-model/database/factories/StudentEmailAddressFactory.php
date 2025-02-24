@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\StudentDataModel\Database\Factories;
 
-use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
 use Illuminate\Database\Eloquent\Factories\Factory;
 

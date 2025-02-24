@@ -80,9 +80,9 @@ class EventAttendee extends BaseModel implements CanBeNotified
         return $this->hasManyThrough(
             Prospect::class,
             ProspectEmailAddress::class,
-            'address', 
-            'primary_email_id', 
-            'email', 
+            'address',
+            'primary_email_id',
+            'email',
             'id'
         );
     }
@@ -92,8 +92,8 @@ class EventAttendee extends BaseModel implements CanBeNotified
         return $this->hasManyThrough(
             Student::class,
             StudentEmailAddress::class,
-            'address', 
-            'primary_email_id', 
+            'address',
+            'primary_email_id',
             'email',
             'id'
         );

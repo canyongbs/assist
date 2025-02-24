@@ -76,9 +76,7 @@
                     'cases' => CasesRelationManager::class,
                     'files' => EngagementFilesRelationManager::class,
                 ]"
-                :prevent-lazy-loading="[
-                    'messages',
-                ]"
+                :prevent-lazy-loading="['messages']"
                 x-on:openengagementaction.window="activeTab = 'messages'"
             />
 
